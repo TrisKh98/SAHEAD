@@ -1,9 +1,11 @@
 {
   "name": "node",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "nodemon ./index.js",
+    "beauty":"lint-staged",
+    "start": "nodemon --inspect src/index.js",
+    "watch": "sass --watch src/resources/scss/app.scss src/public/css/app.css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,11 +18,25 @@
     "url": "https://github.com/TrisKh98/testnode/issues"
   },
   "homepage": "https://github.com/TrisKh98/testnode#readme",
+  "lint-staged": {
+    "src'/**/*.{js,json,scss}": "prettier --write --single-quote --trailing-comma all"
+  },
+  "husky":{
+    "hooks":{
+      "pre-commit": "lint-staged"
+    }
+  },
   "description": "",
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "express-handlebars": "^8.0.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.4.2",
+    "sass": "^1.84.0"
   }
 }
