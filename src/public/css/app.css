@@ -1,5 +1,14 @@
+@charset "UTF-8";
 h1 {
-  color: aqua;
+  color: red;
+}
+
+td.description {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  /* Nếu muốn giới hạn chiều cao và cuộn: */
+  /* max-height: 300px; */
+  /* overflow-y: auto; */
 }
 
 /*# sourceMappingURL=app.css.map */
