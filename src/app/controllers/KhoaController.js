@@ -57,6 +57,22 @@ class KhoaController{
             .then(() => res.redirect('back'))
             .catch(next);
     }
+    //[PATCH]/khoa/handle-form-actions
+    formaction(req, res, next) {
+        switch(req.body.action){
+            case 'delete':
+                Khoa.delete({_id: { $in: req.body.Ids }})
+                   .then(()=> res.redirect('back'))
+                   .catch(next)
+                break;
+            
+            default:
+                res.json({message: 'Action is invalid'});
+        }
+        // res.json(req.body)
+            
+        
+    }
     
 
     

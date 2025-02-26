@@ -1,8 +1,22 @@
-<div class="mt-4">
+<form name="container-form" method="POST" class="mt-4" action="/khoa/handle-form-actions">
     <h3>my khoa</h3>
     {{#if deletedCount}}
     <a href="/me//trash/khoa">Thùng rác [{{ deletedCount }}]</a>
     {{/if}}
+    <div class="mt-4 d-flex align-items-center">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="check-all">
+        <label class="form-check-label" for="check-all">
+          Chọn tất cả
+        </label>
+      </div>
+      <select class="form-select form-cotrol-sm checkbox-select-all-options" aria-label="Default select example" name="action" required>
+        <option value="" >Open this select menu</option>
+        <option value="delete">Xóa</option>
+        
+      </select>
+      <button class="btn btn-primary btn-sm btn-havecheck disabled">Áp dụng</button>
+    </div>
     <table class="table">
         <thead>
             <tr>
@@ -16,6 +30,11 @@
         <tbody>
             {{#each khoa}}
             <tr>
+              <td>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="Ids[]" value="{{ this._id }}" id="">
+                </div>
+              </td>
                 <th scope="row">{{sum @index 1}}</th>
                 <td>{{this.ten}}</td>
                 <td>{{this.mota}}</td>
@@ -37,7 +56,7 @@
             </tr>
         </tbody>
     </table>
-</div>
+</form>
 {{!-- Confirm deleta Khoa --}}
 <div id="delete-khoa-modal" class="modal" tabindex="-1">
   <div class="modal-dialog">
@@ -65,7 +84,11 @@
     document.addEventListener('DOMContentLoaded', function(){
         var khoaId = null;
         var deleteForm = document.forms['delete-khoa-form'];
+        var containerForm =document.forms['container-form'];
         var btnDeleteKhoa = document.getElementById('btn-delete-khoa');
+        var checkAll = $('#check-all');
+        var itemsCheck = $('input[name="Ids[]"]');
+        var haveCheck = $('.btn-havecheck')
 
         $('#delete-khoa-modal').on('show.bs.modal', function (event){
             var button = $(event.relatedTarget);
@@ -77,6 +100,38 @@
             deleteForm.action='/khoa/' + khoaId + '?_method=DELETE';
             deleteForm.submit();
         });
+        //chack all
+        checkAll.change(function(){
+          var isCheck = $(this).prop('checked');
+          itemsCheck.prop('checked', isCheck);
+          renderCheckAllSubmitBtn();
+          
+        });
+        //items check
+        itemsCheck.change(function(){
+          var isCheck = itemsCheck.length === $('input[name="Ids[]"]:checked').length;
+          checkAll.prop('checked', isCheck);
+          renderCheckAllSubmitBtn();
+        });
+
+        haveCheck.on('submit',function (e) {
+          
+
+          var isSubmit = !$(this).hasClass('disabled');
+          if(!isSubmit){
+            e.preventDefault();
+          }
+        })
+
+        function renderCheckAllSubmitBtn(){
+            var checkOut = $('input[name="Ids[]"]:checked').length;
+            if(checkOut > 0){
+              haveCheck.removeClass('disabled');
+            }else{
+              haveCheck.addClass('disabled');
+            }
+        }
+        console.log(containerForm)
     });
 
     

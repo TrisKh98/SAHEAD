@@ -1,0 +1,99 @@
+<form name="container-form" method="POST" class="mt-4">
+    <h3>my khoa</h3>
+    
+    <a href="/ourteam/view">xem [{{ deletedCount }}]</a>
+  
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Ten</th>
+                <th scope="col">logo</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each ourteam}}
+            {{#if deleted}}
+            <tr>
+              
+                <th scope="row">{{sum @index 1}}</th>
+                <td>
+                    <a href="/{{ slug }}/event">{{this.name}}</a>
+                </td>
+                <td>
+                    <img src="{{this.logo}}" alt="{{this.name}}" width="300">
+                </td>
+                
+                <td>
+                    <a href="" class="btn btn-success btn-restore" data-id="{{ this._id }}">Khôi phục</a>
+                    <a href="" class="btn btn-danger" data-bs-toggle="modal" data-id="{{ this._id }}" data-bs-target="#delete-khoa-modal">Xóa vĩnh viễn</a>
+                </td>
+            </tr>
+            {{/if}}
+           {{/each}} 
+            </tr>
+        </tbody>
+    </table>
+</form>
+{{!-- Confirm deleta Khoa --}}
+<div id="delete-khoa-modal" class="modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xóa Khoa?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Sure???.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button id="btn-delete-khoa" type="button" class="btn btn-danger">Xóa bỏ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<form name="delete-khoa-form" method="POST" ></form>
+<form name="restore-khoa-form" method="POST" ></form>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function(){
+        var eventId = null;
+        var deleteForm = document.forms['delete-khoa-form'];
+        var restoreForm = document.forms['restore-khoa-form'];
+        var btnDeleteKhoa = document.getElementById('btn-delete-khoa');
+        var restoreBtn = $('.btn-restore');
+        //Get _id
+        $('#delete-khoa-modal').on('show.bs.modal', function (event){
+            var button = $(event.relatedTarget);
+            eventId = button.data('id');
+            console.log(eventId)
+            
+        });
+        //Convert form to Delete
+        btnDeleteKhoa.onclick=(function(){    
+            deleteForm.action='/ourteam/' + eventId + '/force?_method=DELETE';
+            deleteForm.submit();
+        });
+
+        {{!-- Restore --}}
+
+        restoreBtn.click(function(event)
+        {
+          event.preventDefault();
+          var eventId = $(this).data('id')
+          
+          restoreForm.action='/ourteam/' + eventId + '/restore?_method=PATCH';
+          restoreForm.submit();
+         
+        });
+       
+        
+    });
+
+    
+</script>

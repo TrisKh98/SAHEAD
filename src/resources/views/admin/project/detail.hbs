@@ -1,0 +1,15 @@
+<div class="mt-4">
+    <h3>{{project.name}}</h3>
+    <p><strong>Mô tả:</strong> {{{ project.overview }}}</p>
+    <p><strong>Mục tiêu:</strong> {{project.aim}}</p>
+    <p><strong>Hoạt động:</strong> {{project.activities}}</p>
+    <p><strong>Kết quả:</strong> {{project.outcomes}}</p>
+    
+    {{#if project.image}}
+        <img src="{{project.image}}" alt="{{project.name}}" width="300">
+    {{/if}}
+
+    <p><strong>Thời gian:</strong> {{project.timeline.startDate}} - {{project.timeline.endDate}}</p>
+
+    <a href="/project/view" class="btn btn-secondary">Quay lại</a>
+</div>

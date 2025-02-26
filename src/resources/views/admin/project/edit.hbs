@@ -1,0 +1,49 @@
+<div class="container mt-5">
+    <h2 class="text-center text-primary">Sửa Project</h2>
+    <form method="POST" action="/project/{{ project._id }}?_method=PUT" enctype="multipart/form-data" class="border p-4 shadow rounded bg-light">
+        <div class="mb-3">
+            <label class="form-label fw-bold">Tên Project:</label>
+            <input type="text" class="form-control" name="name" value="{{{ project.name }}}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Tổng quan:</label>
+            <textarea class="form-control" name="overview">{{{ project.overview }}}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Mục tiêu:</label>
+            <input type="text" class="form-control" name="aim" value="{{{ project.aim }}}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Hoạt động:</label>
+            <textarea class="form-control" name="activities">{{{ project.activities }}}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Kết quả:</label>
+            <input type="text" class="form-control" name="outcomes" value="{{{ project.outcomes }}}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Thời gian:</label>
+            <input type="date" class="form-control" name="startDate" value="{{ project.timeline.startDate }}">
+            <input type="date" class="form-control mt-2" name="endDate" value="{{ project.timeline.endDate }}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Hình ảnh hiện tại:</label>
+            <div>
+                <img src="{{ project.image }}" alt="Hình ảnh" class="img-thumbnail" width="150">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Chọn ảnh mới:</label>
+            <input type="file" class="form-control" name="image" accept="image/*">
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mt-3">Lưu thay đổi</button>
+    </form>
+</div>

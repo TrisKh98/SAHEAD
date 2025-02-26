@@ -1,0 +1,123 @@
+<form name="container-form" method="POST" class="mt-4">
+    <h3>my khoa</h3>
+    
+    <a href="/ourteam/create">Tạo [{{ deletedCount }}]</a>
+    <a href="/ourteam/trash">Thùng rác [{{ deletedCount }}]</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Ten</th>
+                <th scope="col">logo</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each ourteam}}
+            <tr>
+              
+                <th scope="row">{{sum @index 1}}</th>
+                <td>
+                    <a href="/{{ slug }}/event">{{this.name}}</a>
+                </td>
+                <td>
+                    <img src="{{this.picture}}" alt="{{this.name}}" width="300">
+                </td>
+                <td>
+                    <a href="/ourteam/{{ this._id }}/edit" class="btn btn-info">Sửa</a>
+                    <a href="" class="btn btn-danger" data-bs-toggle="modal" data-id="{{ this._id }}" data-bs-target="#delete-khoa-modal">Xóa</a>
+                </td>
+            </tr>
+            {{ else }}
+            <tr>
+              <td colspan="5" class="text-center">
+                Bạn chưa có tv nào.
+                <a href="/ourteam/create">Thêm</a>
+              </td>
+            </tr>
+            {{/each}} 
+           
+            </tr>
+        </tbody>
+    </table>
+</form>
+{{!-- Confirm deleta Khoa --}}
+<div id="delete-khoa-modal" class="modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xóa Event?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Chắc chưa?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button id="btn-delete-khoa" type="button" class="btn btn-danger">Xóa bỏ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form name="delete-khoa-form" method="POST" ></form>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function(){
+        var eventId = null;
+        var deleteForm = document.forms['delete-khoa-form'];
+        var containerForm =document.forms['container-form'];
+        var btnDeleteKhoa = document.getElementById('btn-delete-khoa');
+        var checkAll = $('#check-all');
+        var itemsCheck = $('input[name="Ids[]"]');
+        var haveCheck = $('.btn-havecheck')
+
+        $('#delete-khoa-modal').on('show.bs.modal', function (event){
+            var button = $(event.relatedTarget);
+            eventId = button.data('id');
+            console.log(eventId);
+            
+        });
+        
+        btnDeleteKhoa.onclick=(function(){    
+            deleteForm.action='/ourteam/' + eventId + '?_method=DELETE';
+            deleteForm.submit();
+        });
+        //check all
+        checkAll.change(function(){
+          var isCheck = $(this).prop('checked');
+          itemsCheck.prop('checked', isCheck);
+          renderCheckAllSubmitBtn();
+          
+        });
+        //items check
+        itemsCheck.change(function(){
+          var isCheck = itemsCheck.length === $('input[name="Ids[]"]:checked').length;
+          checkAll.prop('checked', isCheck);
+          renderCheckAllSubmitBtn();
+        });
+
+        haveCheck.on('submit',function (e) {
+          
+
+          var isSubmit = !$(this).hasClass('disabled');
+          if(!isSubmit){
+            e.preventDefault();
+          }
+        })
+
+        function renderCheckAllSubmitBtn(){
+            var checkOut = $('input[name="Ids[]"]:checked').length;
+            if(checkOut > 0){
+              haveCheck.removeClass('disabled');
+            }else{
+              haveCheck.addClass('disabled');
+            }
+        }
+        console.log(containerForm)
+    });
+
+    
+</script>
+

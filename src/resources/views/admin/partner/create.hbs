@@ -1,0 +1,22 @@
+<form action="/partner/store" method="POST" enctype="multipart/form-data"> 
+<a href="/partner/view">Xem</a>
+    <label for="name">Tên Đối Tác:</label>
+    <input type="text" name="name" required>
+
+    <div class="mb-3">
+            <label class="form-label fw-bold">Hình ảnh:</label>
+            <input type="file" class="form-control" name="logo" accept="image/*">
+    </div>
+
+    <label for="link">Website:</label>
+    <input type="text" name="link">
+
+    <label for="projectId">Chọn Project:</label>
+    <select name="projectId">
+        {{#each projects}}
+            <option value="{{this._id}}">{{this.name}}</option>
+        {{/each}}
+    </select>
+
+    <button type="submit">Thêm Partner</button>
+</form>

@@ -1,0 +1,19 @@
+<form action="/ourteam/store" method="POST" enctype="multipart/form-data">
+<a href="/ourteam/view">Xem</a>
+    <label for="name">Tên tv:</label>
+    <input type="text" name="name">
+
+    <div class="mb-3">
+            <label class="form-label fw-bold">Hình ảnh:</label>
+            <input type="file" class="form-control" name="image" accept="image/*">
+    </div>
+
+    <label for="projectId">Chọn Project:</label>
+    <select name="projectId">
+        {{#each projects}}
+            <option value="{{this._id}}">{{this.name}}</option>
+        {{/each}}
+    </select>
+
+    <button type="submit">Thêm TV</button>
+</form>

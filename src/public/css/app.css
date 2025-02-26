@@ -11,4 +11,9 @@ td.description {
   /* overflow-y: auto; */
 }
 
+.checkbox-select-all-options {
+  width: 220px;
+  margin: 0 8px;
+}
+
 /*# sourceMappingURL=app.css.map */

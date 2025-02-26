@@ -1,3 +1,5 @@
+
+    <a href="/news/delete">đã xóa</a>
 <table class="table">
   <thead>
     <tr>
@@ -17,7 +19,7 @@
       <td class="description">{{this.noidung}}</td>
       <td>{{this.createdAt}}</td>
       <td>
-        <a href="/khoa/{{ this._id }}/edit" class="btn btn-info">Sửa</a>
+        <a href="/news/{{ this._id }}/edit" class="btn btn-info">Sửa</a>
         <a href="" class="btn btn-danger" data-bs-toggle="modal" data-id="{{ this._id }}" data-bs-target="#delete-khoa-modal">Xóa</a>
       </td>
     </tr>
@@ -31,3 +33,47 @@
     {{/each}}
   </tbody>
 </table>
+
+{{!-- Confirm deleta Khoa --}}
+<div id="delete-khoa-modal" class="modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xóa Khoa?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Sure???.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button id="btn-delete-khoa" type="button" class="btn btn-danger">Xóa bỏ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<form name="delete-khoa-form" method="POST" ></form>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function(){
+        var khoaId = null;
+        var deleteForm = document.forms['delete-khoa-form'];
+        var btnDeleteKhoa = document.getElementById('btn-delete-khoa');
+
+        $('#delete-khoa-modal').on('show.bs.modal', function (event){
+            var button = $(event.relatedTarget);
+            khoaId = button.data('id');
+            
+        });
+        
+        btnDeleteKhoa.onclick=(function(){    
+            deleteForm.action='/news/' + khoaId + '?_method=DELETE';
+            deleteForm.submit();
+        });
+    });
+
+    
+</script>

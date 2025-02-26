@@ -12,6 +12,7 @@ const News = new Schema({
     pic: { type: String, default: '' },
     vdid: { type: String },
     slug: { type: String, slug: 'ten', unique: true },
+    url: { type: String, default: '' },
     noidung: { type: String, default: '' },
 }, {
     timestamps: true

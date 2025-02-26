@@ -7,6 +7,7 @@ const khoaController = require('../app/controllers/KhoaController');
 router.get('/create', khoaController.create);
 router.post('/store', khoaController.store);
 router.get('/:id/edit', khoaController.edit);
+router.post('/handle-form-actions', khoaController.formaction)
 router.put('/:id', khoaController.update);
 router.patch('/:id/restore', khoaController.restore);
 router.delete('/:id', khoaController.destroy);
