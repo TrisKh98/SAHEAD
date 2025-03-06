@@ -2,8 +2,8 @@ const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const methodOverride = require('method-override');
-const multer  = require('multer')
-const cors = require("cors");
+const multer = require('multer');
+const cors = require('cors');
 const upload = require('./config/multer');
 const { engine } = require('express-handlebars');
 const app = express();
@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
 
-app.use(methodOverride('_method'))
+app.use(methodOverride('_method'));
 
 app.use(morgan('combined'));
 
@@ -33,12 +33,12 @@ app.engine(
   engine({
     extname: '.hbs',
     helpers: {
-      sum: (a,b)=> a+b,
-  }
+      sum: (a, b) => a + b,
+    },
   }),
 );
 app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, 'resources','views'));
+app.set('views', path.join(__dirname, 'resources', 'views'));
 
 //route init
 route(app);

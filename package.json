@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "scripts": {
-    "beauty": "lint-staged",
+    "beauty": "prettier --write --single-quote --trailing-comma all 'src'/**/*.{js,json,scss}'",
     "start": "nodemon --inspect src/index.js",
     "watch": "sass --watch src/resources/scss/app.scss src/public/css/app.css",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,14 +18,7 @@
     "url": "https://github.com/TrisKh98/testnode/issues"
   },
   "homepage": "https://github.com/TrisKh98/testnode#readme",
-  "lint-staged": {
-    "src'/**/*.{js,json,scss}": "prettier --write --single-quote --trailing-comma all"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
+  
   "description": "",
   "dependencies": {
     "axios": "^1.8.1",
