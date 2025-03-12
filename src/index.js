@@ -1,3 +1,4 @@
+
 const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
@@ -7,7 +8,8 @@ const cors = require('cors');
 const upload = require('./config/multer');
 const { engine } = require('express-handlebars');
 const app = express();
-const port = 3000;
+
+const { env } = require('./config/environment');
 
 const route = require('./routes');
 const db = require('./config/db');
@@ -43,6 +45,6 @@ app.set('views', path.join(__dirname, 'resources', 'views'));
 //route init
 route(app);
 
-app.listen(port, () => {
-  console.log(`app listening on port ${port}`);
+app.listen(env.APP_PORT, () => {
+  console.log(`app listening on port ${env.APP_PORT}`);
 });

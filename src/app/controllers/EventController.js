@@ -43,6 +43,7 @@ class EventsController {
   view(req, res, next) {
     Events.find({})
       .then((event) => {
+        // res.json(event);
         res.render('admin/events/view', {
           event: mutipleMongooseToObject(event),
         });
@@ -50,6 +51,13 @@ class EventsController {
 
       .catch(next);
   }
+
+  detail(req, res, next) {
+      Events.findOne({ slug: req.params.slug })
+        .lean()
+        .then((event) => res.render('admin/events/detail', { event }))
+        .catch(next);
+    }
   edit(req, res, next) {
     Events.findById(req.params.id)
       .lean()

@@ -1,0 +1,15 @@
+<div class="mt-4">
+    <h3>{{event.name}}</h3>
+    <p><strong>Mô tả:</strong> {{{ event.overview }}}</p>
+    <p><strong>Mục tiêu:</strong> {{event.aim}}</p>
+    <p><strong>Hoạt động:</strong> {{event.activities}}</p>
+    <p><strong>Kết quả:</strong> {{event.outcomes}}</p>
+    
+    {{#if event.image}}
+        <img src="{{event.image}}" alt="{{event.name}}" width="300">
+    {{/if}}
+
+    <p><strong>Ngày đăng:</strong>{{event.dateup}}</p>
+
+    <a href="/events/view" class="btn btn-secondary">Quay lại</a>
+</div>

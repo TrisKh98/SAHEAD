@@ -11,6 +11,7 @@
                 <th scope="col">Ten</th>
                 
                 <th scope="col">Mota</th>
+                <th scope="col"></th>
                 <th scope="col">Ngaydang</th>
                 
                 <th></th>
@@ -25,10 +26,13 @@
                     <img src="{{this.image}}" alt="{{this.name}}" width="300">
                 </td>
                 <td>
-                    <a href="{{ this.url }}">{{this.name}}</a>
+                    <a href="/events/{{ slug }}/detail">{{this.name}}</a>
                 </td>
                 
                 <td>{{{this.overview}}}</td>
+                <td>
+                  <a href="{{ this.url }}">Xem thêm</a>
+                </td>
                 <td>{{this.dateup}}</td>
                 
                 <td>
