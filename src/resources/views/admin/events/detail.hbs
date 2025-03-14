@@ -1,15 +1,39 @@
-<div class="mt-4">
-    <h3>{{event.name}}</h3>
-    <p><strong>Mô tả:</strong> {{{ event.overview }}}</p>
-    <p><strong>Mục tiêu:</strong> {{event.aim}}</p>
-    <p><strong>Hoạt động:</strong> {{event.activities}}</p>
-    <p><strong>Kết quả:</strong> {{event.outcomes}}</p>
-    
-    {{#if event.image}}
-        <img src="{{event.image}}" alt="{{event.name}}" width="300">
-    {{/if}}
+<div class='mt-4'>
+  <p>Ngày đăng: {{formatDate event.dateup}}</p>
 
-    <p><strong>Ngày đăng:</strong>{{event.dateup}}</p>
+  <h3>{{event.name}}</h3>
+  <p><strong>Mô tả:</strong> {{{event.overview}}}</p>
+  <p><strong>Mục tiêu:</strong> {{{event.aim}}}</p>
+  <p><strong>Hoạt động:</strong> {{{event.activities}}}</p>
+  <p><strong>Kết quả:</strong> {{{event.outcomes}}}</p>
+  <div class="mb-3">
+    <label class="form-label fw-bold">Tags:</label>
+    <ul>
+      {{#each event.tags}}
+        <li>{{this.name}}</li>
+      {{/each}}
+    </ul>
+  </div>
+  <div class="mb-3">
+    <label class="form-label fw-bold">Hợp phần:</label>
+    <ul>
+      {{#each event.hopphan}}
+        <li>{{this.name}}</li>
+      {{/each}}
+    </ul>
+  </div>
 
-    <a href="/events/view" class="btn btn-secondary">Quay lại</a>
+
+
+  <h4>Ảnh chính:</h4>
+  <img src='{{event.image}}' class='img-fluid' />
+
+  <h4>Ảnh phụ:</h4>
+  <div class='d-flex flex-wrap'>
+    {{#each event.images}}
+      <img src='{{this}}' class='img-thumbnail m-2' width='150' />
+    {{/each}}
+  </div>
+
+  <a href='/events/view' class='btn btn-secondary'>Quay lại</a>
 </div>

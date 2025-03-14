@@ -1,53 +1,149 @@
-<div class="container mt-5">
-    <h2 class="text-center text-primary">Thêm Event</h2>
-    <form method="POST" action="/events/{{ event._id }}?_method=PUT" enctype="multipart/form-data" class="border p-4 shadow rounded bg-light">
-        <div class="mb-3">
-            <label class="form-label fw-bold">Tên:</label>
-            <input type="text" class="form-control" name="name" value="{{{ event.name }}}" required>
-        </div>
+<div class='container mt-5'>
+  <form
+    method='POST'
+    action='/events/{{event._id}}?_method=PUT'
+    enctype='multipart/form-data'
+    class='border p-4 shadow rounded bg-light'
+  >
+    <h2 class='text-center text-primary'>Chỉnh Sửa Sự Kiện</h2>
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Tổng quan:</label>
-            <textarea class="form-control" name="overview">{{{ event.overview }}}</textarea>
-        </div>
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Tên Sự Kiện:</label>
+      <input
+        type='text'
+        class='form-control'
+        name='name'
+        value='{{event.name}}'
+        required
+      />
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Mục tiêu:</label>
-            <input type="text" class="form-control" name="aim" value="{{{ event.aim }}}">
-        </div>
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Tổng quan:</label>
+      <textarea
+        class='form-control'
+        name='overview'
+      >{{event.overview}}</textarea>
+    </div>
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Ngày đăng:</label>
+      <input
+        type='date'
+        class='form-control'
+        name='dateup'
+        value='{{formatDate event.dateup}}'
+      />
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Hoạt động:</label>
-            <textarea class="form-control" name="activities">{{{ event.activities }}}</textarea>
-        </div>
+    {{!-- <div class="mb-3">
+      <label class="form-label fw-bold">Chọn Tag:</label>
+      <select name="tags" multiple class="form-control">
+        {{#each tags}}
+          <option value="{{this._id}}" {{#if (includes ../event.tags this._id)}}selected{{/if}}>
+            {{this.name}}
+          </option>
+        {{/each}}
+      </select>
+    </div> --}}
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Kết quả:</label>
-            <input type="text" class="form-control" name="outcomes" value="{{{ event.outcomes }}}">
-        </div>
+    <div class="mb-3">
+      <label class="form-label fw-bold">Chọn Tag:</label>
+      <div class="form-check">
+        {{#each tags}}
+          <div class="form-check">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              name="tags" 
+              value="{{this._id}}" 
+              id="tag-{{this._id}}" 
+              {{#if (includes ../event.tags this._id)}}checked{{/if}}>
+            <label class="form-check-label" for="tag-{{this._id}}">
+              {{this.name}}
+            </label>
+          </div>
+        {{/each}}
+      </div>
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">url:</label>
-            <input type="text" class="form-control" name="url" value="{{{ event.url }}}">
-        </div>
-        <div class="mb-3">
-            <label class="form-label fw-bold">Ngày đăng:</label>
-            <input type="text" class="form-control" name="dateup" value="{{{ event.dateup }}}">
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label fw-bold">Hình ảnh hiện tại:</label>
-            <div>
-                <img src="{{ event.image }}" alt="Hình ảnh" class="img-thumbnail" width="150">
-            </div>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label fw-bold">Hình ảnh:</label>
-            <input type="file" class="form-control" name="image" accept="image/*">
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100 mt-3">Sửa</button>
-    </form>
+<div class="mb-3">
+  <label class="form-label fw-bold">Chọn Hợp Phần:</label>
+  {{#each hopphan}}
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" 
+             name="hopphan" 
+             value="{{this._id}}" 
+             {{#if (includes ../event.hopphan this._id)}}checked{{/if}}>
+      <label class="form-check-label">{{this.name}}</label>
+    </div>
+  {{/each}}
 </div>
 
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Ảnh chính hiện tại:</label>
+      <img src='{{event.image}}' class='img-thumbnail' width='150' />
+      <input
+        type='file'
+        class='form-control mt-2'
+        name='image'
+        accept='image/*'
+      />
+    </div>
+
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Ảnh phụ:</label>
+      {{#each event.images}}
+        {{!-- <img src='{{this}}' class='img-thumbnail me-2' width='100' /> --}}
+        <div style="display:inline-block; position:relative;">
+        <img src="{{this}}" alt="Ảnh phụ" class="img-thumbnail" width="100">
+        <button class="btn btn-danger btn-sm delete-subimage" 
+        data-id="{{../event._id}}" 
+        data-name="{{getFileName this}}" 
+        style="position:absolute; top:0; right:0;">X</button>
+
+      </div>
+      {{/each}}
+      <input
+        type='file'
+        class='form-control mt-2'
+        name='images'
+        accept='image/*'
+        multiple
+      />
+    </div>
+
+    <button type='submit' class='btn btn-primary w-100 mt-3'>Cập nhật</button>
+  </form>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const deleteButtons = document.querySelectorAll('.delete-subimage');
+deleteButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        const eventId = button.getAttribute('data-id');
+        const imageName = button.getAttribute('data-name');
+
+        if (confirm('Bạn chắc chắn muốn xóa ảnh này?')) {
+            fetch(`/events/${eventId}/images/${encodeURIComponent(imageName)}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Xóa ảnh thất bại!');
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message);
+                window.location.reload(); // Tải lại trang sau khi xóa
+            })
+            .catch(error => console.error('Lỗi:', error));
+        }
+    });
+});
+
+  });
+</script>

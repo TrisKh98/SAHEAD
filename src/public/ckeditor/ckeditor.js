@@ -21470,12 +21470,10 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
     CKEDITOR.ui.panel.block = CKEDITOR.tools.createClass({
       $: function (a, b) {
         this.element = a.append(
-          a
-            .getDocument()
-            .createElement('div', {
-              attributes: { tabindex: -1, class: 'cke_panel_block' },
-              styles: { display: 'none' },
-            }),
+          a.getDocument().createElement('div', {
+            attributes: { tabindex: -1, class: 'cke_panel_block' },
+            styles: { display: 'none' },
+          }),
         );
         b && CKEDITOR.tools.extend(this, b);
         this.element.setAttributes({
@@ -25595,22 +25593,20 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
                 : ' ') +
               '\x3cdiv class\x3d"cke_inner"\x3e\x3cdiv id\x3d"{topId}" class\x3d"cke_top" role\x3d"presentation"\x3e{content}\x3c/div\x3e\x3c/div\x3e\x3c/div\x3e',
           ),
-          b = CKEDITOR.document
-            .getBody()
-            .append(
-              CKEDITOR.dom.element.createFromHtml(
-                k.output({
-                  content: p,
-                  id: a.id,
-                  langDir: a.lang.dir,
-                  langCode: a.langCode,
-                  name: a.name,
-                  style: 'display:none;z-index:' + (l.baseFloatZIndex - 1),
-                  topId: a.ui.spaceId('top'),
-                  voiceLabel: a.applicationTitle,
-                }),
-              ),
+          b = CKEDITOR.document.getBody().append(
+            CKEDITOR.dom.element.createFromHtml(
+              k.output({
+                content: p,
+                id: a.id,
+                langDir: a.lang.dir,
+                langCode: a.langCode,
+                name: a.name,
+                style: 'display:none;z-index:' + (l.baseFloatZIndex - 1),
+                topId: a.ui.spaceId('top'),
+                voiceLabel: a.applicationTitle,
+              }),
             ),
+          ),
           u = CKEDITOR.tools.eventsBuffer(500, t),
           e = CKEDITOR.tools.eventsBuffer(100, t);
         b.unselectable();

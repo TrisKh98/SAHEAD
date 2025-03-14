@@ -1,44 +1,48 @@
-<div class="container mt-5">
-    <h2 class="text-center text-primary">Thêm Project</h2>
-    <a href="/project/view">Xem [{{ deletedCount }}]</a>
-    <form action="/project/store" method="POST" enctype="multipart/form-data" class="border p-4 shadow rounded bg-light">
-        <div class="mb-3">
-            <label class="form-label fw-bold">Tên Project:</label>
-            <input type="text" class="form-control" name="name" required>
-        </div>
+<div class='container mt-5'>
+  <h2 class='text-center text-primary'>Thêm Project</h2>
+  <a href='/project/view'>Xem [{{deletedCount}}]</a>
+  <form
+    action='/project/store'
+    method='POST'
+    enctype='multipart/form-data'
+    class='border p-4 shadow rounded bg-light'
+  >
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Tên Project:</label>
+      <input type='text' class='form-control' name='name' required />
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Tổng quan:</label>
-            <textarea class="form-control" name="overview"></textarea>
-        </div>
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Tổng quan:</label>
+      <textarea class='form-control' name='overview'></textarea>
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Mục tiêu:</label>
-            <textarea class="form-control" name="aim"></textarea>
-        </div>
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Mục tiêu:</label>
+      <textarea class='form-control' name='aim'></textarea>
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Hoạt động:</label>
-            <textarea class="form-control" name="activities"></textarea>
-        </div>
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Hoạt động:</label>
+      <textarea class='form-control' name='activities'></textarea>
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Kết quả:</label>
-            <textarea class="form-control" name="outcomes"></textarea>
-        </div>
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Kết quả:</label>
+      <textarea class='form-control' name='outcomes'></textarea>
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Thời gian:</label>
-            <input type="date" class="form-control" name="startDate">
-            <input type="date" class="form-control mt-2" name="endDate">
-        </div>
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Thời gian:</label>
+      <input type='date' class='form-control' name='startDate' />
+      <input type='date' class='form-control mt-2' name='endDate' />
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Hình ảnh:</label>
-            <input type="file" class="form-control" name="image" accept="image/*">
-        </div>
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Hình ảnh:</label>
+      <input type='file' class='form-control' name='image' accept='image/*' />
+    </div>
 
-        <button type="submit" class="btn btn-primary w-100 mt-3">Thêm Project</button>
-    </form>
+    <button type='submit' class='btn btn-primary w-100 mt-3'>Thêm Project</button>
+  </form>
 </div>
-

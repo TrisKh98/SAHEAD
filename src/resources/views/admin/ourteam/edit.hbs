@@ -1,21 +1,28 @@
-<form method="POST" action="/ourteam/{{ ourteam._id }}?_method=PUT" enctype="multipart/form-data" class="border p-4 shadow rounded bg-light">
-<a href="/ourteam/view">Xem</a>
-    <label for="name">Tên tv:</label>
-    <input type="text" name="name" value="{{{ ourteam.name }}}" required>
+<form
+  method='POST'
+  action='/ourteam/{{ourteam._id}}?_method=PUT'
+  enctype='multipart/form-data'
+  class='border p-4 shadow rounded bg-light'
+>
+  <a href='/ourteam/view'>Xem</a>
+  <label for='name'>Tên tv:</label>
+  <input type='text' name='name' value='{{{ourteam.name}}}' required />
 
-    <div class="mb-3">
-            <label class="form-label fw-bold">logo hiện tại:</label>
-            <div>
-                <img src="{{ ourteam.picture }}" alt="logo" class="img-thumbnail" width="150">
-            </div>
-        </div>
-    <div class="mb-3">
-            <label class="form-label fw-bold">Ảnh:</label>
-            <input type="file" class="form-control" name="image" accept="image/*">
+  <div class='mb-3'>
+    <label class='form-label fw-bold'>logo hiện tại:</label>
+    <div>
+      <img
+        src='{{ourteam.picture}}'
+        alt='logo'
+        class='img-thumbnail'
+        width='150'
+      />
     </div>
+  </div>
+  <div class='mb-3'>
+    <label class='form-label fw-bold'>Ảnh:</label>
+    <input type='file' class='form-control' name='image' accept='image/*' />
+  </div>
 
-
-    
-
-    <button type="submit">Sửa</button>
+  <button type='submit'>Sửa</button>
 </form>

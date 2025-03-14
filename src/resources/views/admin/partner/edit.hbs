@@ -1,22 +1,31 @@
-<form method="POST" action="/partner/{{ partner._id }}?_method=PUT" enctype="multipart/form-data" class="border p-4 shadow rounded bg-light">
-<a href="/partner/view">Xem</a>
-    <label for="name">Tên Đối Tác:</label>
-    <input type="text" name="name" value="{{{ partner.name }}}" required>
+<form
+  method='POST'
+  action='/partner/{{partner._id}}?_method=PUT'
+  enctype='multipart/form-data'
+  class='border p-4 shadow rounded bg-light'
+>
+  <a href='/partner/view'>Xem</a>
+  <label for='name'>Tên Đối Tác:</label>
+  <input type='text' name='name' value='{{{partner.name}}}' required />
 
-    <div class="mb-3">
-            <label class="form-label fw-bold">logo hiện tại:</label>
-            <div>
-                <img src="{{ partner.logo }}" alt="logo" class="img-thumbnail" width="150">
-            </div>
-        </div>
-    <div class="mb-3">
-            <label class="form-label fw-bold">Logo:</label>
-            <input type="file" class="form-control" name="logo" accept="image/*">
+  <div class='mb-3'>
+    <label class='form-label fw-bold'>logo hiện tại:</label>
+    <div>
+      <img
+        src='{{partner.logo}}'
+        alt='logo'
+        class='img-thumbnail'
+        width='150'
+      />
     </div>
+  </div>
+  <div class='mb-3'>
+    <label class='form-label fw-bold'>Logo:</label>
+    <input type='file' class='form-control' name='logo' accept='image/*' />
+  </div>
 
-    <label for="link">Website:</label>
-    <input type="text" name="link" value="{{{ partner.link }}}">
-    
+  <label for='link'>Website:</label>
+  <input type='text' name='link' value='{{{partner.link}}}' />
 
-    <button type="submit">Thêm Partner</button>
+  <button type='submit'>Thêm Partner</button>
 </form>

@@ -1,0 +1,30 @@
+<div class='mt-4'>
+  <h3>Danh sách Tags</h3>
+  <a href='/tags/trash'>Xem Thùng Rác</a>
+  <a href='/tags/create'>Thêm</a>
+  <table class='table mt-3'>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Tên Tag</th>
+        <th>Slug</th>
+        <th>Hành Động</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each tags}}
+        <tr>
+          <td>{{@index}}</td>
+          <td>{{this.name}}</td>
+          <td>{{this.slug}}</td>
+          <td>
+            <a href="/tags/{{this._id}}/edit" class="btn btn-info btn-sm">Sửa</a>
+            <form method="POST" action="/tags/{{this._id}}?_method=DELETE" style="display:inline;">
+              <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+            </form>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

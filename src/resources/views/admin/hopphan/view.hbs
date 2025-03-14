@@ -1,0 +1,32 @@
+<div class='mt-4'>
+  <h3>Danh sách Hợp phần</h3>
+  <a href='/hopphan/trash'>Thùng Rác</a>
+  <a href='/hopphan/create'>Thêm</a>
+  <table class='table mt-3'>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Tên Tag</th>
+        <th>Slug</th>
+        <th>Nội dung</th>
+        <th>Hành Động</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each hp}}
+        <tr>
+          <td>{{@index}}</td>
+          <td>{{this.name}}</td>
+          <td>{{this.slug}}</td>
+          <td>{{{ this.content }}}</td>
+          <td>
+            <a href="/hopphan/{{this._id}}/edit" class="btn btn-info btn-sm">Sửa</a>
+            <form method="POST" action="/hopphan/{{this._id}}?_method=DELETE" style="display:inline;">
+              <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+            </form>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

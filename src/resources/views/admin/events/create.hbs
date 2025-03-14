@@ -1,48 +1,98 @@
-<div class="container mt-5">
-    <h2 class="text-center text-primary">Thêm Event</h2>
-    <a href="/events/view">Xem [{{ deletedCount }}]</a>
-    <form action="/events/store" method="POST" enctype="multipart/form-data" class="border p-4 shadow rounded bg-light">
-        <div class="mb-3">
-            <label class="form-label fw-bold">Tên:</label>
-            <input type="text" class="form-control" name="name" required>
-        </div>
+<div class='container mt-5'>
+  <a href='/events/view'>Xem</a>
+  <form
+    method='POST'
+    action='/events/store'
+    enctype='multipart/form-data'
+    class='border p-4 shadow rounded bg-light'
+  >
+    <h2 class='text-center text-primary'>Thêm Sự Kiện</h2>
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Tổng quan:</label>
-            <textarea class="form-control" name="overview"></textarea>
-        </div>
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Tên Sự Kiện:</label>
+      <input type='text' class='form-control' name='name' required />
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Mục tiêu:</label>
-            <input type="text" class="form-control" name="aim">
-        </div>
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Tổng quan:</label>
+      <textarea class='form-control' name='overview'></textarea>
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Hoạt động:</label>
-            <textarea class="form-control" name="activities"></textarea>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label fw-bold">Kết quả:</label>
-            <input type="text" class="form-control" name="outcomes">
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label fw-bold">url:</label>
-            <input type="text" class="form-control" name="url">
-        </div>
-        <div class="mb-3">
-            <label class="form-label fw-bold">Ngày đăng:</label>
-            <input type="text" class="form-control" name="dateup">
-        </div>
+    {{!-- <div class='mb-3'>
+      <label class='form-label fw-bold'>Ngày đăng:</label>
+      <input type='text' class='form-control' name='dateup' />
+    </div> --}}
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Ngày đăng:</label>
+      <input
+        type='date'
+        class='form-control'
+        name='dateup'
+        value='{{formatDate event.dateup}}'
+      />
+    </div>
 
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Hình ảnh:</label>
-            <input type="file" class="form-control" name="image" accept="image/*">
+    {{!-- <div class="mb-3">
+      <label class="form-label fw-bold">Chọn Tag:</label>
+      <select name="tags" multiple class="form-control">
+        {{#each tags}}
+          <option value="{{this._id}}"
+            {{#if (includes ../event.tags this._id)}}selected{{/if}}>
+            {{this.name}}
+          </option>
+        {{/each}}
+      </select>
+    </div> --}}
+    <div class="mb-3">
+      <label class="form-label fw-bold">Chọn Tag:</label>
+      <div class="form-check">
+          {{#each tags}}
+            <div class="form-check">
+              <input 
+                class="form-check-input" 
+                type="checkbox" 
+                name="tags" 
+                value="{{this._id}}" 
+                id="tag-{{this._id}}" 
+                {{#if (includes ../event.tags this._id)}}checked{{/if}}>
+              <label class="form-check-label" for="tag-{{this._id}}">
+                {{this.name}}
+              </label>
+            </div>
+          {{/each}}
         </div>
+      </div>
 
-        <button type="submit" class="btn btn-primary w-100 mt-3">Thêm</button>
-    </form>
+    <div class="mb-3">
+      <label class="form-label fw-bold">Chọn Hợp Phần:</label>
+      {{#each hopphan}}
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" 
+                name="hopphan" 
+                value="{{this._id}}" 
+                {{#if (includes ../event.hopphan this._id)}}checked{{/if}}>
+          <label class="form-check-label">{{this.name}}</label>
+        </div>
+      {{/each}}
+    </div>
+
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Ảnh chính:</label>
+      <input type='file' class='form-control' name='image' accept='image/*' />
+    </div>
+
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Ảnh phụ:</label>
+      <input
+        type='file'
+        class='form-control'
+        name='images'
+        accept='image/*'
+        multiple
+      />
+    </div>
+
+    <button type='submit' class='btn btn-primary w-100 mt-3'>Lưu</button>
+  </form>
 </div>
-

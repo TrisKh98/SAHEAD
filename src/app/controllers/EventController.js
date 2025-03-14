@@ -1,15 +1,34 @@
 const Events = require('../models/Events');
 const Project = require('../models/Project');
+const Hopphan = require('../models/Hopphan');
+const Tags = require('../models/Tags');
+
 const { mutipleMongooseToObject } = require('../../util/mongoose');
+const fs = require('fs');
+const path = require('path');
 
 class EventsController {
   create(req, res, next) {
-    res.render('admin/events/create');
+    // res.render('admin/events/create');
+    Promise.all([
+      Tags.find({}).lean(),
+      Hopphan.find({}).lean(),
+    ])
+    .then(([tags, hopphan]) => res.render('admin/events/create', { tags, hopphan }))
+    .catch(next);
   }
   // [POST]/khoa/store
   store(req, res, next) {
     try {
-      const imagePath = req.file ? `/img/${req.file.filename}` : '';
+      // Ảnh chính
+      const imagePath = req.files['image']
+        ? `/img/${req.files['image'][0].filename}`
+        : '';
+
+      // Ảnh phụ
+      const imagesPaths = req.files['images']
+        ? req.files['images'].map((file) => `/img/${file.filename}`)
+        : [];
 
       const eventsData = {
         name: req.body.name,
@@ -18,24 +37,18 @@ class EventsController {
         activities: req.body.activities,
         outcomes: req.body.outcomes,
         url: req.body.url,
-        dateup: req.body.dateup,
-
-        // timeline: {
-        //     startDate: req.body.startDate || null,
-        //     endDate: req.body.endDate || null,
-        // },
-        // Lưu đối tác vào DB
+        dateup: req.body.dateup ? new Date(req.body.dateup) : Date.now,
         image: imagePath,
+        images: imagesPaths,
+        tags: Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags],
+        hopphan: Array.isArray(req.body.tags) ? req.body.hopphan : [req.body.hopphan]
       };
 
       const events = new Events(eventsData);
       events
         .save()
-        .then(() => res.redirect('back'))
-        .catch((error) => {
-          console.error('Lỗi khi lưu:', error);
-          res.status(500).json({ message: 'Lỗi khi lưu', error });
-        });
+        .then(() => res.redirect('/events/view'))
+        .catch((error) => next(error));
     } catch (error) {
       next(error);
     }
@@ -52,49 +65,104 @@ class EventsController {
       .catch(next);
   }
 
+  // detail(req, res, next) {
+  //   Events.findOne({ slug: req.params.slug })
+  //     .lean()
+  //     .then((event) => res.render('admin/events/detail', { event }))
+  //     .catch(next);
+    
+  // }
   detail(req, res, next) {
-      Events.findOne({ slug: req.params.slug })
-        .lean()
-        .then((event) => res.render('admin/events/detail', { event }))
-        .catch(next);
-    }
-  edit(req, res, next) {
-    Events.findById(req.params.id)
+    Events.findOne({ slug: req.params.slug })
+      .populate('tags')
+      .populate('hopphan')  
       .lean()
-      .then((event) => res.render('admin/events/edit', { event }))
+      .then((event) => res.render('admin/events/detail', { event }))
       .catch(next);
+  }
+  edit(req, res, next) {
+    Promise.all([
+      Events.findById(req.params.id).lean(),
+      Tags.find({}).lean(),
+      Hopphan.find({}).lean(),
+    ])
+      .then(([event, tags, hopphan]) => {
+        res.render('admin/events/edit', { event, tags, hopphan });
+      })
+      .catch(next);
+    // Events.findById(req.params.id)
+    //   .lean()
+    //   .then((event) => res.render('admin/events/edit', { event }))
+    //   .catch(next);
   }
 
   update(req, res, next) {
-    try {
-      const updateData = {
-        name: req.body.name,
-        overview: req.body.overview,
-        aim: req.body.aim,
-        activities: req.body.activities,
-        outcomes: req.body.outcomes,
-        url: req.body.url,
-        dateup: req.body.dateup,
-      };
+    const updateData = {
+      name: req.body.name,
+      overview: req.body.overview,
+      aim: req.body.aim,
+      activities: req.body.activities,
+      outcomes: req.body.outcomes,
+      url: req.body.url,
+      dateup: req.body.dateup ? new Date(req.body.dateup) : undefined,
+      tags: Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags],
+      hopphan: Array.isArray(req.body.tags) ? req.body.hopphan : [req.body.hopphan]
+    };
 
-      // Nếu có ảnh mới, cập nhật ảnh, nếu không giữ nguyên ảnh cũ
-      if (req.file) {
-        updateData.image = `/img/${req.file.filename}`;
+    // Nếu có ảnh chính mới
+    if (req.files['image']) {
+      updateData.image = `/img/${req.files['image'][0].filename}`;
+    }
+
+    // Nếu có thêm ảnh phụ mới
+    if (req.files['images']) {
+      updateData.$push = {
+        images: {
+          $each: req.files['images'].map((file) => `/img/${file.filename}`),
+        },
+      };
+    }
+
+    Events.updateOne({ _id: req.params.id }, updateData)
+      .then(() => res.redirect('/events/view'))
+      .catch((error) => next(error));
+  }
+
+  // Xóa ảnh phụ khỏi sự kiện
+  deleteSubImage(req, res, next) {
+    const { id, imageName } = req.params;
+
+    if (!imageName) {
+      return res.status(400).json({ message: 'Tên ảnh không hợp lệ!' });
+    }
+
+    const decodedImageName = decodeURIComponent(imageName);
+    const imagePath = path.join(
+      __dirname,
+      '../../public/img',
+      decodedImageName,
+    );
+
+    // Xóa ảnh khỏi thư mục
+    fs.unlink(imagePath, (err) => {
+      if (err && err.code !== 'ENOENT') {
+        console.error('❌ Lỗi khi xóa ảnh:', err);
+        return res.status(500).json({ message: 'Lỗi khi xóa ảnh!' });
       }
 
-      // Cập nhật thời gian nếu có dữ liệu
-      // updateData.timeline = {};
-      // if (req.body.dateup) updateData.timeline.startDate = req.body.dateup;
-
-      Events.updateOne({ _id: req.params.id }, updateData)
-        .then(() => res.redirect('/events/view'))
+      // Xóa ảnh khỏi mảng `images` trong MongoDB
+      Events.updateOne(
+        { _id: id },
+        { $pull: { images: `/img/${decodedImageName}` } },
+      )
+        .then(() => {
+          res.status(200).json({ message: '✅ Xóa ảnh thành công!' });
+        })
         .catch((error) => {
-          console.error('Lỗi khi cập nhật:', error);
-          res.status(500).json({ message: 'Lỗi khi cập nhật', error });
+          console.error('❌ Lỗi khi cập nhật MongoDB:', error);
+          res.status(500).json({ message: 'Lỗi khi cập nhật dữ liệu!' });
         });
-    } catch (error) {
-      next(error);
-    }
+    });
   }
 
   // [DELETE]/khoa/:id
