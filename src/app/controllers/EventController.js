@@ -26,9 +26,13 @@ class EventsController {
         : '';
 
       // Ảnh phụ
+      // const imagesPaths = req.files['images']
+      //   ? req.files['images'].map((file) => `/img/${file.filename}`)
+      //   : [];
       const imagesPaths = req.files['images']
-        ? req.files['images'].map((file) => `/img/${file.filename}`)
+        ? req.files['images'].map((file) => ({ path: `/img/${file.filename}`, approve: 0 }))
         : [];
+      
 
       const eventsData = {
         name: req.body.name,
@@ -118,9 +122,13 @@ class EventsController {
     if (req.files['images']) {
       updateData.$push = {
         images: {
-          $each: req.files['images'].map((file) => `/img/${file.filename}`),
+          $each: req.files['images'].map((file) => ({
+            path: `/img/${file.filename}`,
+            approve: 0
+          })),
         },
       };
+      
     }
 
     Events.updateOne({ _id: req.params.id }, updateData)
@@ -153,8 +161,9 @@ class EventsController {
       // Xóa ảnh khỏi mảng `images` trong MongoDB
       Events.updateOne(
         { _id: id },
-        { $pull: { images: `/img/${decodedImageName}` } },
-      )
+        { $pull: { images: { path: `/img/${decodedImageName}` } } },
+      )      
+      
         .then(() => {
           res.status(200).json({ message: '✅ Xóa ảnh thành công!' });
         })

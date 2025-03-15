@@ -25,6 +25,7 @@
         name='overview'
       >{{event.overview}}</textarea>
     </div>
+
     <div class='mb-3'>
       <label class='form-label fw-bold'>Ngày đăng:</label>
       <input
@@ -93,16 +94,16 @@
     <div class='mb-3'>
       <label class='form-label fw-bold'>Ảnh phụ:</label>
       {{#each event.images}}
-        {{!-- <img src='{{this}}' class='img-thumbnail me-2' width='100' /> --}}
         <div style="display:inline-block; position:relative;">
-        <img src="{{this}}" alt="Ảnh phụ" class="img-thumbnail" width="100">
-        <button class="btn btn-danger btn-sm delete-subimage" 
-        data-id="{{../event._id}}" 
-        data-name="{{getFileName this}}" 
-        style="position:absolute; top:0; right:0;">X</button>
+          <img src="{{this.path}}" alt="Ảnh phụ" class="img-thumbnail" width="100">
 
-      </div>
+          <button class="btn btn-danger btn-sm delete-subimage" 
+                  data-id="{{../event._id}}" 
+                  data-name="{{getFileName this.path}}" 
+                  style="position:absolute; top:0; right:0;">X</button>
+        </div>
       {{/each}}
+
       <input
         type='file'
         class='form-control mt-2'
@@ -119,31 +120,30 @@
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const deleteButtons = document.querySelectorAll('.delete-subimage');
-deleteButtons.forEach(button => {
-    button.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        const eventId = button.getAttribute('data-id');
-        const imageName = button.getAttribute('data-name');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            const eventId = button.getAttribute('data-id');
+            const imageName = button.getAttribute('data-name');
 
-        if (confirm('Bạn chắc chắn muốn xóa ảnh này?')) {
-            fetch(`/events/${eventId}/images/${encodeURIComponent(imageName)}`, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Xóa ảnh thất bại!');
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(data.message);
-                window.location.reload(); // Tải lại trang sau khi xóa
-            })
-            .catch(error => console.error('Lỗi:', error));
-        }
+            if (confirm('Bạn chắc chắn muốn xóa ảnh này?')) {
+                fetch(`/events/${eventId}/images/${encodeURIComponent(imageName)}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Xóa ảnh thất bại!');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                    window.location.reload(); // Tải lại trang sau khi xóa
+                })
+                .catch(error => console.error('Lỗi:', error));
+            }
+        });
     });
-});
-
   });
 </script>

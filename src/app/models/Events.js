@@ -9,7 +9,11 @@ const Events = new Schema(
     name: { type: String, required: true },
     overview: { type: String, default: '' },
     image: { type: String, default: '' },
-    images: [{ type: String, default: '' }],
+    images: [{
+      path: { type: String },
+      approve: { type: Number, default: 0 }
+    }],
+    
     aim: { type: String },
     slug: { type: String, slug: 'name', unique: true },
     url: { type: String, default: '' },
