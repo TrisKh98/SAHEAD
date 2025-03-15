@@ -1,4 +1,4 @@
-<form name="container-form" method="POST" class="mt-4">
+<form name="container-form" method="GET" class="mt-4">
     <h3>my khoa</h3>
     
     <a href="/events/create">Tạo [{{ deletedCount }}]</a>
@@ -12,7 +12,7 @@
                 
                 <th scope="col">Mota</th>
                 <th scope="col"></th>
-                
+                <th>Thongbao</th>
                 <th scope="col">Ngaydang</th>
                 
                 <th></th>
@@ -34,6 +34,19 @@
                 <td>
                   <a href="{{ this.url }}">Xem thêm</a>
                 </td>
+                <td>
+                  {{#if this.images}}
+                    {{#each this.images}}
+                      {{#unless this.isNotified}}
+                        <div class="alert alert-info" role="alert">
+                          Có ảnh phụ mới được thêm cho sự kiện: <strong>{{../name}}</strong>
+                          <button class="btn btn-sm btn-primary mark-seen" data-id="{{../_id}}">Đã xem</button>
+                        </div>
+                      {{/unless}}
+                    {{/each}}
+                  {{/if}}
+                </td>
+
                 <td>{{formatDate this.dateup}}</td>
                 
                 <td>
@@ -84,7 +97,9 @@
         var btnDeleteKhoa = document.getElementById('btn-delete-khoa');
         var checkAll = $('#check-all');
         var itemsCheck = $('input[name="Ids[]"]');
-        var haveCheck = $('.btn-havecheck')
+        var haveCheck = $('.btn-havecheck');
+
+        const buttons = document.querySelectorAll('.mark-seen');
 
         $('#delete-khoa-modal').on('show.bs.modal', function (event){
             var button = $(event.relatedTarget);
@@ -129,6 +144,32 @@
             }
         }
         console.log(containerForm)
+
+        buttons.forEach(button => {
+          button.addEventListener('click', () => {
+            const eventId = button.getAttribute('data-id');
+
+            fetch(`/events/${eventId}/mark-seen`, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+            .then(res => {
+              if (!res.ok) {
+                throw new Error(`HTTP error! Status: ${res.status}`);
+              }
+              return res.json();
+            })
+            .then(data => {
+              alert(data.message);
+              // Chuyển hướng về /events/view thay vì reload
+              window.location.href = '/events/view';
+            })
+            .catch(err => console.error('Lỗi:', err));
+          });
+        });
+
     });
 
     

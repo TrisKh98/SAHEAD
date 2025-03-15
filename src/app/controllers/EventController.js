@@ -30,7 +30,7 @@ class EventsController {
       //   ? req.files['images'].map((file) => `/img/${file.filename}`)
       //   : [];
       const imagesPaths = req.files['images']
-        ? req.files['images'].map((file) => ({ path: `/img/${file.filename}`, approve: 0 }))
+        ? req.files['images'].map((file) => ({ path: `/img/${file.filename}`, approve: 0 ,isNotified: false }))
         : [];
       
 
@@ -109,8 +109,8 @@ class EventsController {
       outcomes: req.body.outcomes,
       url: req.body.url,
       dateup: req.body.dateup ? new Date(req.body.dateup) : undefined,
-      tags: Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags],
-      hopphan: Array.isArray(req.body.tags) ? req.body.hopphan : [req.body.hopphan]
+      tags: Array.isArray(req.body.tags) ? req.body.tags.flat() : [req.body.tags],
+      hopphan: Array.isArray(req.body.hopphan) ? req.body.hopphan.flat() : [req.body.hopphan]
     };
 
     // Nếu có ảnh chính mới
@@ -124,7 +124,8 @@ class EventsController {
         images: {
           $each: req.files['images'].map((file) => ({
             path: `/img/${file.filename}`,
-            approve: 0
+            approve: 0,
+            isNotified: false
           })),
         },
       };
@@ -132,8 +133,48 @@ class EventsController {
     }
 
     Events.updateOne({ _id: req.params.id }, updateData)
-      .then(() => res.redirect('/events/view'))
+      .then(() => res.redirect('back'))
       .catch((error) => next(error));
+  }
+
+  markAsSeen(req, res) {
+    const { id } = req.params;
+  
+    Events.updateOne(
+      { _id: id, 'images.isNotified': false },
+      { $set: { 'images.$[].isNotified': true } }
+    )
+      .then(() => res.status(200).json({ message: '✅ Đã đánh dấu đã xem!' }))
+      .catch((err) => res.status(500).json({ message: '❌ Lỗi khi cập nhật!' }));
+  }
+  
+  updateApproveStatus(req, res) {
+    const { id, imageName } = req.params;
+    const { approve } = req.body;
+
+    Events.findOne({ _id: id, 'images.path': `/img/${imageName}` })
+      .then((event) => {
+        if (!event) {
+          return res.status(404).json({ message: '❌ Ảnh không tồn tại!' });
+        }
+
+        // Tìm ảnh cụ thể trong mảng
+        const image = event.images.find(img => img.path === `/img/${imageName}`);
+
+        // Nếu trạng thái không thay đổi, bỏ qua cập nhật
+        if (image.approve === approve) {
+          return res.status(200).json({ message: '⚠️ Trạng thái duyệt không thay đổi!' });
+        }
+
+        // Cập nhật trạng thái nếu có thay đổi
+        return Events.updateOne(
+          { _id: id, 'images.path': `/img/${imageName}` },
+          { $set: { 'images.$.approve': approve } }
+        ).then(() => {
+          res.status(200).json({ message: '✅ Cập nhật trạng thái duyệt thành công!' });
+        });
+      })
+      .catch((err) => res.status(500).json({ message: '❌ Lỗi khi cập nhật!' }));
   }
 
   // Xóa ảnh phụ khỏi sự kiện

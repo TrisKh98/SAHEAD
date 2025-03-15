@@ -31,7 +31,9 @@
   <h4>Ảnh phụ:</h4>
   <div class='d-flex flex-wrap'>
     {{#each event.images}}
-      <img src='{{this.path}}' class='img-thumbnail m-2' width='150' />
+      {{#if (eq this.approve 1)}}
+        <img src='{{this.path}}' class='img-thumbnail m-2' width='150' />
+      {{/if}}
     {{/each}}
   </div>
 

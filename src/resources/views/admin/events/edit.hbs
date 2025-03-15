@@ -1,4 +1,5 @@
 <div class='container mt-5'>
+  <a href='/events/view'>Xem</a>
   <form
     method='POST'
     action='/events/{{event._id}}?_method=PUT'
@@ -93,16 +94,22 @@
 
     <div class='mb-3'>
       <label class='form-label fw-bold'>Ảnh phụ:</label>
-      {{#each event.images}}
-        <div style="display:inline-block; position:relative;">
-          <img src="{{this.path}}" alt="Ảnh phụ" class="img-thumbnail" width="100">
-
-          <button class="btn btn-danger btn-sm delete-subimage" 
-                  data-id="{{../event._id}}" 
-                  data-name="{{getFileName this.path}}" 
-                  style="position:absolute; top:0; right:0;">X</button>
-        </div>
-      {{/each}}
+      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        {{#each event.images}}
+          <div style="position:relative;">
+            <img src="{{this.path}}" alt="Ảnh phụ" class="img-thumbnail" width="100">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <label>
+                <input type="checkbox" class="approve-checkbox" data-id="{{../event._id}}" data-name="{{getFileName this.path}}" {{#if this.approve}}checked{{/if}}>
+                Duyệt
+              </label>
+              <button class="btn btn-danger btn-sm delete-subimage" 
+                      data-id="{{../event._id}}" 
+                      data-name="{{getFileName this.path}}">X</button>
+            </div>
+          </div>
+        {{/each}}
+      </div>
 
       <input
         type='file'
@@ -120,6 +127,8 @@
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const deleteButtons = document.querySelectorAll('.delete-subimage');
+    const approveCheckboxes = document.querySelectorAll('.approve-checkbox');
+
     deleteButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             e.preventDefault();
@@ -145,5 +154,30 @@
             }
         });
     });
+
+    // Toggle approve
+     const form = document.querySelector('form');
+      form.addEventListener('submit', (e) => {
+          e.preventDefault();
+
+          const approveUpdates = [];
+          approveCheckboxes.forEach(checkbox => {
+              const eventId = checkbox.getAttribute('data-id');
+              const imageName = checkbox.getAttribute('data-name');
+              const approveStatus = checkbox.checked ? 1 : 0;
+
+              approveUpdates.push(fetch(`/events/${eventId}/images/${encodeURIComponent(imageName)}/approve`, {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ approve: approveStatus })
+              }));
+          });
+
+          Promise.all(approveUpdates)
+            .then(() => {
+              form.submit();
+            })
+            .catch(error => console.error('Lỗi khi cập nhật:', error));
+      });
   });
 </script>

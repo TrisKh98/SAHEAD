@@ -11,7 +11,8 @@ const Events = new Schema(
     image: { type: String, default: '' },
     images: [{
       path: { type: String },
-      approve: { type: Number, default: 0 }
+      approve: { type: Number, default: 0 },
+      isNotified: { type: Boolean, default: false },
     }],
     
     aim: { type: String },

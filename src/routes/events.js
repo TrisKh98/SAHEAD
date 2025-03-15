@@ -22,8 +22,11 @@ router.put(
   ]),
   eventsController.update,
 );
-// API xóa ảnh phụ
+
 router.delete('/:id/images/:imageName', eventsController.deleteSubImage);
+router.patch('/:id/mark-seen', eventsController.markAsSeen);
+router.patch('/:id/images/:imageName/approve', eventsController.updateApproveStatus);
+
 router.get('/view', eventsController.view);
 router.get('/:slug/detail', eventsController.detail);
 router.delete('/:id', eventsController.destroy);
