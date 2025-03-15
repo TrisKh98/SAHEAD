@@ -10,6 +10,7 @@ router.post(
   upload.fields([
     { name: 'image', maxCount: 1 },
     { name: 'images', maxCount: 10 },
+    { name: 'documents', maxCount: 10 }
   ]),
   eventsController.store,
 );
@@ -19,6 +20,7 @@ router.put(
   upload.fields([
     { name: 'image', maxCount: 1 },
     { name: 'images', maxCount: 10 },
+    { name: 'documents', maxCount: 10 }
   ]),
   eventsController.update,
 );
@@ -26,6 +28,12 @@ router.put(
 router.delete('/:id/images/:imageName', eventsController.deleteSubImage);
 router.patch('/:id/mark-seen', eventsController.markAsSeen);
 router.patch('/:id/images/:imageName/approve', eventsController.updateApproveStatus);
+
+router.patch('/:id/documents/:docName/approve', eventsController.updateApproveDocStatus);
+router.delete('/:id/documents/:docName', eventsController.deleteDocument);
+router.get('/:id/documents/:docName/view', eventsController.viewDocument);
+router.get('/:id/documents/:docName/download', eventsController.downloadDocument);
+
 
 router.get('/view', eventsController.view);
 router.get('/:slug/detail', eventsController.detail);

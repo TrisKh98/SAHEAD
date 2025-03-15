@@ -120,6 +120,40 @@
       />
     </div>
 
+    <h4>Tài liệu:</h4>
+      <div>
+        {{#each event.documents}}
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <a href="{{this.path}}" target="_blank">{{getFileName this.path}}</a>
+
+            <!-- Nút xem tài liệu -->
+            <a href="/events/{{../event._id}}/documents/{{getFileName this.path}}/view" 
+              class="btn btn-primary btn-sm" 
+              target="_blank">
+              Xem
+            </a>
+
+            <label>
+              <input type="checkbox" 
+                    class="approve-doc-checkbox" 
+                    name="approveDocs" 
+                    value="{{this.path}}" 
+                    {{#if this.approve}}checked{{/if}}>
+              Duyệt
+            </label>
+
+            <button class="btn btn-danger btn-sm delete-doc" 
+                    data-id="{{../event._id}}" 
+                    data-name="{{getFileName this.path}}">Xóa</button>
+          </div>
+        {{/each}}
+      </div>
+
+      <input type='file' class='form-control mt-2' name='documents' accept='.pdf,.doc,.docx' multiple />
+
+
+
+
     <button type='submit' class='btn btn-primary w-100 mt-3'>Cập nhật</button>
   </form>
 </div>
@@ -128,6 +162,8 @@
   document.addEventListener('DOMContentLoaded', () => {
     const deleteButtons = document.querySelectorAll('.delete-subimage');
     const approveCheckboxes = document.querySelectorAll('.approve-checkbox');
+
+    const form = document.querySelector('form');
 
     deleteButtons.forEach(button => {
         button.addEventListener('click', (e) => {
@@ -179,5 +215,50 @@
             })
             .catch(error => console.error('Lỗi khi cập nhật:', error));
       });
+///////////////////////////////doc
+       // Xử lý xóa tài liệu
+      document.querySelectorAll('.delete-doc').forEach(button => {
+        button.addEventListener('click', () => {
+          const eventId = button.dataset.id;
+          const docName = button.dataset.name;
+
+          if (confirm('Bạn chắc chắn muốn xóa tài liệu này?')) {
+            fetch(`/events/${eventId}/documents/${docName}`, {
+              method: 'DELETE'
+            })
+            .then(res => res.json())
+            .then(data => {
+              alert(data.message);
+              window.location.reload();
+            })
+            .catch(err => console.error('Lỗi:', err));
+          }
+        });
+      });
+
+      // Xử lý duyệt tài liệu khi nhấn "Cập nhật"
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const approveUpdates = [];
+        document.querySelectorAll('.approve-doc-checkbox').forEach(checkbox => {
+          const eventId = checkbox.dataset.id;
+          const docName = checkbox.dataset.name;
+          const approveStatus = checkbox.checked ? 1 : 0;
+
+          approveUpdates.push(fetch(`/events/${eventId}/documents/${docName}/approve`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ approve: approveStatus })
+          }));
+        });
+
+        Promise.all(approveUpdates)
+          .then(() => form.submit())
+          .catch(err => console.error('Lỗi khi cập nhật:', err));
+      });
   });
+
+
+
 </script>

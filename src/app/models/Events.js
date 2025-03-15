@@ -14,7 +14,12 @@ const Events = new Schema(
       approve: { type: Number, default: 0 },
       isNotified: { type: Boolean, default: false },
     }],
-    
+    documents: [{
+      path: { type: String },
+      originalName: { type: String },
+      approve: { type: Number, default: 0 },
+      isNotified: { type: Boolean, default: false },
+    }],
     aim: { type: String },
     slug: { type: String, slug: 'name', unique: true },
     url: { type: String, default: '' },
@@ -23,8 +28,6 @@ const Events = new Schema(
     dateup: { type: Date, default: Date.now },
     tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tags' }],
     hopphan: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Hopphan' }],
-    // document: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Document' }],
-    // imageevent: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Document' }],
   },
   {
     timestamps: true,

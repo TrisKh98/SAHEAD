@@ -6,6 +6,7 @@
   <p><strong>Mục tiêu:</strong> {{{event.aim}}}</p>
   <p><strong>Hoạt động:</strong> {{{event.activities}}}</p>
   <p><strong>Kết quả:</strong> {{{event.outcomes}}}</p>
+
   <div class="mb-3">
     <label class="form-label fw-bold">Tags:</label>
     <ul>
@@ -14,6 +15,7 @@
       {{/each}}
     </ul>
   </div>
+
   <div class="mb-3">
     <label class="form-label fw-bold">Hợp phần:</label>
     <ul>
@@ -23,19 +25,41 @@
     </ul>
   </div>
 
-
-
   <h4>Ảnh chính:</h4>
   <img src='{{event.image}}' class='img-fluid' />
 
   <h4>Ảnh phụ:</h4>
   <div class='d-flex flex-wrap'>
     {{#each event.images}}
-      {{#if (eq this.approve 1)}}
-        <img src='{{this.path}}' class='img-thumbnail m-2' width='150' />
-      {{/if}}
+      <img src='{{this.path}}' class='img-thumbnail m-2' width='150' />
     {{/each}}
   </div>
+
+<h4>Tài liệu:</h4>
+<ul>
+  {{#if event.documents.length}}
+    {{#each event.documents}}
+      <li>
+        <a href="{{this.path}}" target="_blank">{{this.originalName}}</a>
+
+        <!-- Nút xem tài liệu -->
+        <a href="/events/{{../event._id}}/documents/{{getFileName this.path}}/view" 
+           class="btn btn-primary btn-sm" target="_blank">
+          Xem
+        </a>
+
+        <!-- Nút tải tài liệu -->
+        <a href="/events/{{../event._id}}/documents/{{getFileName this.path}}/download" 
+           class="btn btn-success btn-sm">
+          Tải về
+        </a>
+      </li>
+    {{/each}}
+  {{else}}
+    <li>Không có tài liệu nào được duyệt.</li>
+  {{/if}}
+</ul>
+
 
   <a href='/events/view' class='btn btn-secondary'>Quay lại</a>
 </div>

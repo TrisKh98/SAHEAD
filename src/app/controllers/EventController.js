@@ -33,6 +33,14 @@ class EventsController {
         ? req.files['images'].map((file) => ({ path: `/img/${file.filename}`, approve: 0 ,isNotified: false }))
         : [];
       
+      const documentPaths = req.files['documents']
+      ? req.files['documents'].map((file) => ({
+          path: `/docs/${file.filename}`,
+          originalName: file.originalname,
+          approve: 0,
+          isNotified: false
+        }))
+      : [];
 
       const eventsData = {
         name: req.body.name,
@@ -44,8 +52,9 @@ class EventsController {
         dateup: req.body.dateup ? new Date(req.body.dateup) : Date.now,
         image: imagePath,
         images: imagesPaths,
+        documents: documentPaths,
         tags: Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags],
-        hopphan: Array.isArray(req.body.tags) ? req.body.hopphan : [req.body.hopphan]
+        hopphan: Array.isArray(req.body.hopphan) ? req.body.hopphan : [req.body.hopphan]
       };
 
       const events = new Events(eventsData);
@@ -76,14 +85,32 @@ class EventsController {
   //     .catch(next);
     
   // }
+  // detail(req, res, next) {
+  //   Events.findOne({ slug: req.params.slug })
+  //     .populate('tags')
+  //     .populate('hopphan')  
+  //     .lean()
+  //     .then((event) => res.render('admin/events/detail', { event }))
+  //     .catch(next);
+  // }
+
   detail(req, res, next) {
     Events.findOne({ slug: req.params.slug })
       .populate('tags')
-      .populate('hopphan')  
+      .populate('hopphan')
       .lean()
-      .then((event) => res.render('admin/events/detail', { event }))
+      .then((event) => {
+        if (event) {
+          // Lọc chỉ những ảnh và tài liệu đã duyệt
+          event.images = event.images.filter((img) => img.approve === 1);
+          event.documents = event.documents.filter((doc) => doc.approve === 1);
+        }
+  
+        res.render('admin/events/detail', { event });
+      })
       .catch(next);
   }
+
   edit(req, res, next) {
     Promise.all([
       Events.findById(req.params.id).lean(),
@@ -132,6 +159,33 @@ class EventsController {
       
     }
 
+     // Thêm tài liệu mới
+  if (req.files['documents']) {
+    if (!updateData.$push) updateData.$push = {};
+    updateData.$push.documents = {
+      $each: req.files['documents'].map((file) => ({
+        path: `/docs/${file.filename}`,
+        originalName: file.originalname,
+        approve: 0,
+        isNotified: false,
+      })),
+    };
+  }
+
+  // Cập nhật trạng thái duyệt cho tài liệu
+  Events.findById(req.params.id)
+    .then((event) => {
+      if (event && event.documents) {
+        event.documents.forEach((doc) => {
+          doc.approve = req.body.approveDocs && req.body.approveDocs.includes(doc.path) ? 1 : 0;
+        });
+        return event.save();
+      }
+    })
+    .then(() => res.redirect('back'))
+    .catch((error) => next(error));
+    
+
     Events.updateOne({ _id: req.params.id }, updateData)
       .then(() => res.redirect('back'))
       .catch((error) => next(error));
@@ -149,7 +203,7 @@ class EventsController {
   }
   
   updateApproveStatus(req, res) {
-    const { id, imageName } = req.params;
+   const { id, imageName } = req.params;
     const { approve } = req.body;
 
     Events.findOne({ _id: id, 'images.path': `/img/${imageName}` })
@@ -214,6 +268,92 @@ class EventsController {
         });
     });
   }
+
+  // Duyệt tài liệu
+updateApproveDocStatus(req, res) {
+  const { id, docName } = req.params;
+  const { approve } = req.body;
+
+  Events.updateOne(
+    { _id: id, 'documents.path': `/docs/${docName}` },
+    { $set: { 'documents.$.approve': approve } }
+  )
+  .then(() => res.status(200).json({ message: '✅ Duyệt tài liệu thành công!' }))
+  .catch(() => res.status(500).json({ message: '❌ Lỗi khi duyệt tài liệu!' }));
+}
+
+// Xóa tài liệu
+deleteDocument(req, res) {
+  const { id, docName } = req.params;
+
+  Events.updateOne(
+    { _id: id },
+    { $pull: { documents: { path: `/docs/${docName}` } } }
+  )
+  .then(() => res.status(200).json({ message: '✅ Xóa tài liệu thành công!' }))
+  .catch(() => res.status(500).json({ message: '❌ Lỗi khi xóa tài liệu!' }));
+}
+
+viewDocument(req, res, next) {
+  const { docName } = req.params;
+  const filePath = path.join(__dirname, `../../public/docs/${docName}`);
+
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      return res.status(404).send('❌ Tài liệu không tồn tại!');
+    }
+
+    // Nếu là PDF thì render trực tiếp
+    if (filePath.endsWith('.pdf')) {
+      res.sendFile(filePath);
+    } 
+    // Nếu là DOC/DOCX thì gợi ý tải về hoặc chuyển sang PDF nếu muốn nâng cấp
+    else if (filePath.endsWith('.doc') || filePath.endsWith('.docx')) {
+      res.download(filePath, docName);
+    } else {
+      res.status(400).send('❌ Định dạng tài liệu không được hỗ trợ!');
+    }
+  });
+}
+
+downloadDocument(req, res, next) {
+  const { id, docName } = req.params;
+
+  Events.findOne({ _id: id, 'documents.path': `/docs/${docName}` })
+    .then((event) => {
+      if (!event) {
+        return res.status(404).send('❌ Tài liệu không tồn tại!');
+      }
+
+      const document = event.documents.find(doc => doc.path === `/docs/${docName}`);
+      if (!document) {
+        return res.status(404).send('❌ Tài liệu không tồn tại!');
+      }
+
+      const filePath = path.join(__dirname, `../../public${document.path}`);
+      const originalName = document.originalName || docName; // Ưu tiên tên gốc nếu có
+
+      fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+          return res.status(404).send('❌ File không tồn tại trên server!');
+        }
+
+        // Tải về với tên gốc
+        res.download(filePath, originalName, (err) => {
+          if (err) {
+            console.error('❌ Lỗi khi tải tài liệu:', err);
+            return res.status(500).send('❌ Lỗi khi tải tài liệu!');
+          }
+        });
+      });
+    })
+    .catch((err) => {
+      console.error('❌ Lỗi:', err);
+      next(err);
+    });
+}
+
+
 
   // [DELETE]/khoa/:id
   destroy(req, res, next) {

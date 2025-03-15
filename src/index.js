@@ -20,6 +20,8 @@ db.connect();
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/img', express.static(path.join(__dirname, 'public/img')));
+app.use('/docs', express.static(path.join(__dirname, 'public/docs')));
+
 
 app.use(express.urlencoded({ extended: true }));
 
