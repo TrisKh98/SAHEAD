@@ -16,7 +16,6 @@ const Events = new Schema(
     }],
     documents: [{
       path: { type: String },
-      originalName: { type: String },
       approve: { type: Number, default: 0 },
       isNotified: { type: Boolean, default: false },
     }],

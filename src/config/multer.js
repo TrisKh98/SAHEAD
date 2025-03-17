@@ -20,11 +20,9 @@ const storage = multer.diskStorage({
     }
   },
   filename: function (req, file, cb) {
-    // Giữ nguyên tên gốc nhưng thêm timestamp để tránh trùng lặp
-    const name = path.parse(file.originalname).name;
-    const ext = path.extname(file.originalname);
-    const uniqueName = `${name}-${Date.now()}${ext}`;
-    cb(null, uniqueName);
+    // Đặt tên tệp là timestamp + phần mở rộng (tránh lỗi trùng lặp)
+    const uniqueSuffix = Date.now() + path.extname(file.originalname);
+    cb(null, uniqueSuffix);
   },
 });
 

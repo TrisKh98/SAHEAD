@@ -47,19 +47,32 @@
     </div>
 
     <div class='mb-3'>
-      <label class='form-label fw-bold'>Thời gian:</label>
+      <label class='form-label fw-bold'>Ngày bắt đầu:
+        <small class="text-muted">
+          {{#if project.timeline.startDate}}{{formatDate project.timeline.startDate "DD/MM/YYYY"}}{{else}}Chưa đặt ngày{{/if}}
+        </small>
+      </label>
+
       <input
         type='date'
         class='form-control'
         name='startDate'
-        value='{{project.timeline.startDate}}'
+        value='{{#if project.timeline.startDate}}{{formatDate project.timeline.startDate "YYYY-MM-DD"}}{{/if}}'
       />
+      
+      <label class='form-label fw-bold'>Ngày kết thúc:
+        <small class="text-muted">
+          {{#if project.timeline.endDate}}{{formatDate project.timeline.endDate "DD/MM/YYYY"}}{{else}}Chưa đặt ngày{{/if}}
+        </small>
+      </label>
+      
       <input
         type='date'
-        class='form-control mt-2'
+        class='form-control'
         name='endDate'
-        value='{{project.timeline.endDate}}'
+        value='{{#if project.timeline.endDate}}{{formatDate project.timeline.endDate "YYYY-MM-DD"}}{{/if}}'
       />
+      
     </div>
 
     <div class='mb-3'>

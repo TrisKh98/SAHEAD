@@ -10,7 +10,18 @@ class HopphanController {
 
   // Lưu hợp phần vào database
   store(req, res, next) {
-    const hp = new Hopphan(req.body);
+
+    const Data = {
+      name: req.body.name,
+      content: req.body.content,
+      timeline: {
+        startDate: req.body.startDate || null,
+        endDate: req.body.endDate || null,
+      },
+    
+    };
+
+    const hp = new Hopphan(Data);
     hp
       .save()
       .then(() => res.redirect('back'))
@@ -38,10 +49,29 @@ class HopphanController {
   
     // Cập nhật hợp phần
     update(req, res, next) {
-      Hopphan.updateOne({ _id: req.params.id }, req.body)
-        .then(() => res.redirect('/hopphan/view'))
-        .catch(next);
-    }
+        try {
+          const updateData = {
+            name: req.body.name,
+            content: req.body.content,
+          };
+    
+    
+          // Cập nhật thời gian nếu có dữ liệu
+          updateData.timeline = {};
+          if (req.body.startDate)
+            updateData.timeline.startDate = req.body.startDate;
+          if (req.body.endDate) updateData.timeline.endDate = req.body.endDate;
+    
+          Hopphan.updateOne({ _id: req.params.id }, updateData)
+            .then(() => res.redirect('/hopphan/view'))
+            .catch((error) => {
+              console.error('Lỗi khi cập nhật:', error);
+              res.status(500).json({ message: 'Lỗi khi cập nhật', error });
+            });
+        } catch (error) {
+          next(error);
+        }
+      }
   
     // Xóa mềm hợp phần
     destroy(req, res, next) {

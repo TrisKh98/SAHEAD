@@ -14,7 +14,12 @@ class EventsController {
       Tags.find({}).lean(),
       Hopphan.find({}).lean(),
     ])
-    .then(([tags, hopphan]) => res.render('admin/events/create', { tags, hopphan }))
+    .then(([tags, hopphan]) => {res.render('admin/events/create', { 
+      tags, 
+      hopphan, 
+      defaultDate: new Date().toISOString().split('T')[0] 
+    })
+  })
     .catch(next);
   }
   // [POST]/khoa/store
@@ -36,7 +41,6 @@ class EventsController {
       const documentPaths = req.files['documents']
       ? req.files['documents'].map((file) => ({
           path: `/docs/${file.filename}`,
-          originalName: file.originalname,
           approve: 0,
           isNotified: false
         }))
@@ -49,7 +53,7 @@ class EventsController {
         activities: req.body.activities,
         outcomes: req.body.outcomes,
         url: req.body.url,
-        dateup: req.body.dateup ? new Date(req.body.dateup) : Date.now,
+        dateup: req.body.dateup ? new Date(req.body.dateup) : new Date(),
         image: imagePath,
         images: imagesPaths,
         documents: documentPaths,
@@ -68,6 +72,7 @@ class EventsController {
   }
   view(req, res, next) {
     Events.find({})
+      .sort({ createdAt: -1 }) 
       .then((event) => {
         // res.json(event);
         res.render('admin/events/view', {
@@ -85,15 +90,6 @@ class EventsController {
   //     .catch(next);
     
   // }
-  // detail(req, res, next) {
-  //   Events.findOne({ slug: req.params.slug })
-  //     .populate('tags')
-  //     .populate('hopphan')  
-  //     .lean()
-  //     .then((event) => res.render('admin/events/detail', { event }))
-  //     .catch(next);
-  // }
-
   detail(req, res, next) {
     Events.findOne({ slug: req.params.slug })
       .populate('tags')
@@ -110,7 +106,6 @@ class EventsController {
       })
       .catch(next);
   }
-
   edit(req, res, next) {
     Promise.all([
       Events.findById(req.params.id).lean(),
@@ -118,7 +113,7 @@ class EventsController {
       Hopphan.find({}).lean(),
     ])
       .then(([event, tags, hopphan]) => {
-        res.render('admin/events/edit', { event, tags, hopphan });
+        res.render('admin/events/edit', { event, tags, hopphan, defaultDate: new Date().toISOString().split('T')[0]  });
       })
       .catch(next);
     // Events.findById(req.params.id)
@@ -165,7 +160,6 @@ class EventsController {
     updateData.$push.documents = {
       $each: req.files['documents'].map((file) => ({
         path: `/docs/${file.filename}`,
-        originalName: file.originalname,
         approve: 0,
         isNotified: false,
       })),
@@ -315,45 +309,6 @@ viewDocument(req, res, next) {
     }
   });
 }
-
-downloadDocument(req, res, next) {
-  const { id, docName } = req.params;
-
-  Events.findOne({ _id: id, 'documents.path': `/docs/${docName}` })
-    .then((event) => {
-      if (!event) {
-        return res.status(404).send('❌ Tài liệu không tồn tại!');
-      }
-
-      const document = event.documents.find(doc => doc.path === `/docs/${docName}`);
-      if (!document) {
-        return res.status(404).send('❌ Tài liệu không tồn tại!');
-      }
-
-      const filePath = path.join(__dirname, `../../public${document.path}`);
-      const originalName = document.originalName || docName; // Ưu tiên tên gốc nếu có
-
-      fs.access(filePath, fs.constants.F_OK, (err) => {
-        if (err) {
-          return res.status(404).send('❌ File không tồn tại trên server!');
-        }
-
-        // Tải về với tên gốc
-        res.download(filePath, originalName, (err) => {
-          if (err) {
-            console.error('❌ Lỗi khi tải tài liệu:', err);
-            return res.status(500).send('❌ Lỗi khi tải tài liệu!');
-          }
-        });
-      });
-    })
-    .catch((err) => {
-      console.error('❌ Lỗi:', err);
-      next(err);
-    });
-}
-
-
 
   // [DELETE]/khoa/:id
   destroy(req, res, next) {

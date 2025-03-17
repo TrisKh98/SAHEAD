@@ -32,7 +32,6 @@ router.patch('/:id/images/:imageName/approve', eventsController.updateApproveSta
 router.patch('/:id/documents/:docName/approve', eventsController.updateApproveDocStatus);
 router.delete('/:id/documents/:docName', eventsController.deleteDocument);
 router.get('/:id/documents/:docName/view', eventsController.viewDocument);
-router.get('/:id/documents/:docName/download', eventsController.downloadDocument);
 
 
 router.get('/view', eventsController.view);
@@ -41,5 +40,6 @@ router.delete('/:id', eventsController.destroy);
 router.get('/trash', eventsController.trash);
 router.patch('/:id/restore', eventsController.restore);
 router.delete('/:id/force', eventsController.force);
+
 
 module.exports = router;

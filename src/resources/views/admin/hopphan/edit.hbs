@@ -13,6 +13,36 @@
       >{{{hp.content}}}</textarea>
     </div>
 
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Ngày bắt đầu:
+        <small class="text-muted">
+          {{#if hp.timeline.startDate}}{{formatDate hp.timeline.startDate "DD/MM/YYYY"}}{{else}}Chưa đặt ngày{{/if}}
+        </small>
+      </label>
+
+      <input
+        type='date'
+        class='form-control'
+        name='startDate'
+        value='{{#if hp.timeline.startDate}}{{formatDate hp.timeline.startDate "YYYY-MM-DD"}}{{/if}}'
+      />
+      
+      <label class='form-label fw-bold'>Ngày kết thúc:
+        <small class="text-muted">
+          {{#if hp.timeline.endDate}}{{formatDate hp.timeline.endDate "DD/MM/YYYY"}}{{else}}Chưa đặt ngày{{/if}}
+        </small>
+      </label>
+      
+      <input
+        type='date'
+        class='form-control'
+        name='endDate'
+        value='{{#if hp.timeline.endDate}}{{formatDate hp.timeline.endDate "YYYY-MM-DD"}}{{/if}}'
+      />
+      
+    </div>
+
+
     <button type='submit' class='btn btn-success'>Cập nhật</button>
   </form>
 </div>

@@ -7,6 +7,7 @@ const ourteamRouter = require('./ourteam');
 const eventsRouter = require('./events');
 const tagsRouter = require('./tags');
 const hopphanRouter = require('./hopphan');
+const accountRouter = require('./account');
 function route(app) {
   app.use('/news', newsRouter);
   app.use('/khoa', khoaRouter);
@@ -16,6 +17,7 @@ function route(app) {
   app.use('/events', eventsRouter);
   app.use('/tags', tagsRouter);
   app.use('/hopphan', hopphanRouter);
+  app.use('/account', accountRouter);
   app.use('/', siteRouter);
 }
 

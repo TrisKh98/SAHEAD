@@ -9,6 +9,10 @@ const Hopphan = new Schema(
     name: { type: String, required: true },
     slug: { type: String, slug: 'name', unique: true },
     content: { type: String },
+    timeline: {
+      startDate: Date,
+      endDate: Date,
+    },
   },
   {
     timestamps: true,

@@ -35,31 +35,22 @@
     {{/each}}
   </div>
 
-<h4>Tài liệu:</h4>
-<ul>
-  {{#if event.documents.length}}
-    {{#each event.documents}}
-      <li>
-        <a href="{{this.path}}" target="_blank">{{this.originalName}}</a>
-
-        <!-- Nút xem tài liệu -->
-        <a href="/events/{{../event._id}}/documents/{{getFileName this.path}}/view" 
-           class="btn btn-primary btn-sm" target="_blank">
-          Xem
-        </a>
-
-        <!-- Nút tải tài liệu -->
-        <a href="/events/{{../event._id}}/documents/{{getFileName this.path}}/download" 
-           class="btn btn-success btn-sm">
-          Tải về
-        </a>
-      </li>
-    {{/each}}
-  {{else}}
-    <li>Không có tài liệu nào được duyệt.</li>
-  {{/if}}
-</ul>
-
+  <h4>Tài liệu:</h4>
+  <ul>
+    {{#if event.documents.length}}
+      {{#each event.documents}}
+        <li>
+          <a href="{{this.path}}" target="_blank">{{getFileName this.path}}</a>
+          <a href="/events/{{../event._id}}/documents/{{getFileName this.path}}/view" 
+             class="btn btn-primary btn-sm" target="_blank">
+            Xem
+          </a>
+        </li>
+      {{/each}}
+    {{else}}
+      <li>Không có tài liệu nào được duyệt.</li>
+    {{/if}}
+  </ul>
 
   <a href='/events/view' class='btn btn-secondary'>Quay lại</a>
 </div>

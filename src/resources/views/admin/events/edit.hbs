@@ -28,14 +28,21 @@
     </div>
 
     <div class='mb-3'>
-      <label class='form-label fw-bold'>Ngày đăng:</label>
-      <input
-        type='date'
-        class='form-control'
-        name='dateup'
-        value='{{formatDate event.dateup}}'
-      />
+      <label class='form-label fw-bold'>Ngày đăng: 
+        <small class="text-muted">
+          {{#if event.dateup}}{{formatDate event.dateup 'DD/MM/YYYY'}}{{else}}{{formatDate defaultDate 'DD/MM/YYYY'}}{{/if}}
+        </small>
+      </label>
+       <input
+          type='date'
+          class='form-control'
+          name='dateup'
+          value='{{#if event.dateup}}{{formatDate event.dateup 'YYYY-MM-DD'}}{{else}}{{formatDate defaultDate 'YYYY-MM-DD'}}{{/if}}'
+        />
+
+        
     </div>
+
 
     {{!-- <div class="mb-3">
       <label class="form-label fw-bold">Chọn Tag:</label>
@@ -121,37 +128,26 @@
     </div>
 
     <h4>Tài liệu:</h4>
-      <div>
-        {{#each event.documents}}
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <a href="{{this.path}}" target="_blank">{{getFileName this.path}}</a>
+    <div>
+      {{#each event.documents}}
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <a href="{{this.path}}" target="_blank">{{getFileName this.path}}</a>
+          <label>
+            <input type="checkbox" 
+                  class="approve-doc-checkbox" 
+                  name="approveDocs" 
+                  value="{{this.path}}" 
+                  {{#if this.approve}}checked{{/if}}>
+            Duyệt
+          </label>
+          <button class="btn btn-danger btn-sm delete-doc" 
+                  data-id="{{../event._id}}" 
+                  data-name="{{getFileName this.path}}">Xóa</button>
+        </div>
+      {{/each}}
+    </div>
 
-            <!-- Nút xem tài liệu -->
-            <a href="/events/{{../event._id}}/documents/{{getFileName this.path}}/view" 
-              class="btn btn-primary btn-sm" 
-              target="_blank">
-              Xem
-            </a>
-
-            <label>
-              <input type="checkbox" 
-                    class="approve-doc-checkbox" 
-                    name="approveDocs" 
-                    value="{{this.path}}" 
-                    {{#if this.approve}}checked{{/if}}>
-              Duyệt
-            </label>
-
-            <button class="btn btn-danger btn-sm delete-doc" 
-                    data-id="{{../event._id}}" 
-                    data-name="{{getFileName this.path}}">Xóa</button>
-          </div>
-        {{/each}}
-      </div>
-
-      <input type='file' class='form-control mt-2' name='documents' accept='.pdf,.doc,.docx' multiple />
-
-
+    <input type='file' class='form-control mt-2' name='documents' accept='.pdf,.doc,.docx' multiple />
 
 
     <button type='submit' class='btn btn-primary w-100 mt-3'>Cập nhật</button>
@@ -192,7 +188,6 @@
     });
 
     // Toggle approve
-     const form = document.querySelector('form');
       form.addEventListener('submit', (e) => {
           e.preventDefault();
 
