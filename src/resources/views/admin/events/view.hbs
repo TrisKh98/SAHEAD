@@ -20,7 +20,7 @@
         </thead>
         <tbody>
             {{#each event}}
-            <tr>
+            <tr data-id="{{ this._id }}">
               
                 <th scope="row">{{sum @index 1}}</th>
                 <td>
@@ -35,16 +35,16 @@
                   <a href="{{ this.url }}">Xem thêm</a>
                 </td>
                 <td>
-                  {{#if this.images}}
-                    {{#each this.images}}
-                      {{#unless this.isNotified}}
-                        <div class="alert alert-info" role="alert">
-                          Có ảnh phụ mới được thêm cho sự kiện: <strong>{{../name}}</strong>
-                          <button class="btn btn-sm btn-primary mark-seen" data-id="{{../_id}}">Đã xem</button>
-                        </div>
-                      {{/unless}}
-                    {{/each}}
-                  {{/if}}
+                  <div class="alert alert-info">
+                    Có ảnh mới: <strong class="imageCount">0</strong>
+                  </div>
+                  <div class="alert alert-warning">
+                    Có tài liệu mới: <strong class="docCount">0</strong>
+                  </div>
+
+                  <button class="btn btn-sm btn-primary mark-seen" data-id="{{ this._id }}">
+                    Đã xem
+                  </button>
                 </td>
 
                 <td>{{formatDate this.dateup}}</td>
@@ -100,6 +100,7 @@
         var haveCheck = $('.btn-havecheck');
 
         const buttons = document.querySelectorAll('.mark-seen');
+        const eventRows = document.querySelectorAll('tr[data-id]');
 
         $('#delete-khoa-modal').on('show.bs.modal', function (event){
             var button = $(event.relatedTarget);
@@ -145,7 +146,19 @@
         }
         console.log(containerForm)
 
-        buttons.forEach(button => {
+        eventRows.forEach(row => {
+          const eventId = row.getAttribute('data-id');
+          
+          fetch(`/events/${eventId}/notifications`)
+            .then(response => response.json())
+            .then(data => {
+              row.querySelector('.imageCount').innerText = data.totalNewImages;
+              row.querySelector('.docCount').innerText = data.totalNewDocs;
+            })
+            .catch(error => console.error('Lỗi:', error));
+        });
+
+        {{!-- buttons.forEach(button => {
           button.addEventListener('click', () => {
             const eventId = button.getAttribute('data-id');
 
@@ -165,6 +178,23 @@
               alert(data.message);
               // Chuyển hướng về /events/view thay vì reload
               window.location.href = '/events/view';
+            })
+            .catch(err => console.error('Lỗi:', err));
+          });
+        }); --}}
+
+         buttons.forEach(button => {
+          button.addEventListener('click', () => {
+            const eventId = button.getAttribute('data-id');
+
+            fetch(`/events/${eventId}/mark-seen`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' }
+            })
+            .then(res => res.json())
+            .then(data => {
+              alert(data.message);
+              window.location.reload(); // Reload lại trang để cập nhật giao diện
             })
             .catch(err => console.error('Lỗi:', err));
           });

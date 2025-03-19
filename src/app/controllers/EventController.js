@@ -75,6 +75,7 @@ class EventsController {
       .sort({ createdAt: -1 }) 
       .then((event) => {
         // res.json(event);
+        
         res.render('admin/events/view', {
           event: mutipleMongooseToObject(event),
         });
@@ -123,78 +124,108 @@ class EventsController {
   }
 
   update(req, res, next) {
-    const updateData = {
-      name: req.body.name,
-      overview: req.body.overview,
-      aim: req.body.aim,
-      activities: req.body.activities,
-      outcomes: req.body.outcomes,
-      url: req.body.url,
-      dateup: req.body.dateup ? new Date(req.body.dateup) : undefined,
-      tags: Array.isArray(req.body.tags) ? req.body.tags.flat() : [req.body.tags],
-      hopphan: Array.isArray(req.body.hopphan) ? req.body.hopphan.flat() : [req.body.hopphan]
-    };
-
-    // Nếu có ảnh chính mới
-    if (req.files['image']) {
-      updateData.image = `/img/${req.files['image'][0].filename}`;
-    }
-
-    // Nếu có thêm ảnh phụ mới
-    if (req.files['images']) {
-      updateData.$push = {
-        images: {
-          $each: req.files['images'].map((file) => ({
-            path: `/img/${file.filename}`,
-            approve: 0,
-            isNotified: false
-          })),
-        },
+    Events.findById(req.params.id)
+      .then((event) => {
+        if (!event) {
+          return res.status(404).json({ message: '❌ Sự kiện không tồn tại!' });
+        }
+      const updateData = {
+        name: req.body.name,
+        overview: req.body.overview,
+        aim: req.body.aim,
+        activities: req.body.activities,
+        outcomes: req.body.outcomes,
+        url: req.body.url,
+        dateup: req.body.dateup ? new Date(req.body.dateup) : undefined,
+        tags: Array.isArray(req.body.tags) ? req.body.tags.flat() : [req.body.tags],
+        hopphan: Array.isArray(req.body.hopphan) ? req.body.hopphan.flat() : [req.body.hopphan]
       };
-      
+
+      // Nếu có ảnh chính mới
+      if (req.files['image']) {
+        if (event.image) {
+          const oldImagePath = path.join(__dirname, '../../public', event.image);
+          fs.unlink(oldImagePath, (err) => {
+            if (err && err.code !== 'ENOENT') {
+              console.error('❌ Lỗi khi xóa ảnh cũ:', err);
+            }
+          });
+        }
+        updateData.image = `/img/${req.files['image'][0].filename}`;
+      }
+
+      // Nếu có thêm ảnh phụ mới
+      if (req.files['images']) {
+        updateData.$push = {
+          images: {
+            $each: req.files['images'].map((file) => ({
+              path: `/img/${file.filename}`,
+              approve: 0,
+              isNotified: false
+            })),
+          },
+        };
+        
+      }
+
+      // Thêm tài liệu mới
+    if (req.files['documents']) {
+      if (!updateData.$push) updateData.$push = {};
+      updateData.$push.documents = {
+        $each: req.files['documents'].map((file) => ({
+          path: `/docs/${file.filename}`,
+          approve: 0,
+          isNotified: false,
+        })),
+      };
     }
 
-     // Thêm tài liệu mới
-  if (req.files['documents']) {
-    if (!updateData.$push) updateData.$push = {};
-    updateData.$push.documents = {
-      $each: req.files['documents'].map((file) => ({
-        path: `/docs/${file.filename}`,
-        approve: 0,
-        isNotified: false,
-      })),
-    };
-  }
-
-  // Cập nhật trạng thái duyệt cho tài liệu
-  Events.findById(req.params.id)
-    .then((event) => {
-      if (event && event.documents) {
-        event.documents.forEach((doc) => {
-          doc.approve = req.body.approveDocs && req.body.approveDocs.includes(doc.path) ? 1 : 0;
-        });
-        return event.save();
-      }
+    // Cập nhật trạng thái duyệt cho tài liệu
+    event.documents.forEach((doc) => {
+      doc.approve = req.body.approveDocs && req.body.approveDocs.includes(doc.path) ? 1 : 0;
+    });
+    
+      return Promise.all([
+        event.save(), 
+        Events.updateOne({ _id: req.params.id }, updateData)
+      ]);
     })
     .then(() => res.redirect('back'))
     .catch((error) => next(error));
-    
-
-    Events.updateOne({ _id: req.params.id }, updateData)
-      .then(() => res.redirect('back'))
-      .catch((error) => next(error));
   }
+
+  getEventNotifications(req, res, next) {
+    const eventId = req.params.id;
+  
+    Events.findById(eventId)
+      .then(event => {
+        if (!event) {
+          return res.status(404).json({ error: 'Sự kiện không tồn tại' });
+        }
+  
+        const totalNewImages = event.images ? event.images.filter(img => !img.isNotified).length : 0;
+        const totalNewDocs = event.documents ? event.documents.filter(doc => !doc.isNotified).length : 0;
+  
+        res.json({ totalNewImages, totalNewDocs });
+      })
+      .catch(error => res.status(500).json({ error: 'Lỗi server' }));
+  }
+  
+  
+  
 
   markAsSeen(req, res) {
     const { id } = req.params;
-  
+
     Events.updateOne(
-      { _id: id, 'images.isNotified': false },
-      { $set: { 'images.$[].isNotified': true } }
+      { _id: id },
+      { $set: { 'images.$[].isNotified': true, 'documents.$[].isNotified': true } } 
     )
-      .then(() => res.status(200).json({ message: '✅ Đã đánh dấu đã xem!' }))
-      .catch((err) => res.status(500).json({ message: '❌ Lỗi khi cập nhật!' }));
-  }
+    
+    .then(() => res.status(200).json({ message: '✅ Đã đánh dấu đã xem!' }))
+    .catch((err) => res.status(500).json({ message: '❌ Lỗi khi cập nhật!' }));
+}
+
   
   updateApproveStatus(req, res) {
    const { id, imageName } = req.params;
@@ -280,13 +311,35 @@ updateApproveDocStatus(req, res) {
 deleteDocument(req, res) {
   const { id, docName } = req.params;
 
-  Events.updateOne(
-    { _id: id },
-    { $pull: { documents: { path: `/docs/${docName}` } } }
-  )
-  .then(() => res.status(200).json({ message: '✅ Xóa tài liệu thành công!' }))
-  .catch(() => res.status(500).json({ message: '❌ Lỗi khi xóa tài liệu!' }));
+  if (!docName) {
+    return res.status(400).json({ message: 'Tên tài liệu không hợp lệ!' });
+  }
+
+  const decodedDocName = decodeURIComponent(docName);
+  const docPath = path.join(__dirname, '../../public/docs', decodedDocName);
+
+  // Xóa tài liệu khỏi thư mục
+  fs.unlink(docPath, (err) => {
+    if (err && err.code !== 'ENOENT') {
+      console.error('❌ Lỗi khi xóa tài liệu từ thư mục:', err);
+      return res.status(500).json({ message: 'Lỗi khi xóa tài liệu từ thư mục!' });
+    }
+
+    // Xóa tài liệu khỏi mảng `documents` trong MongoDB
+    Events.updateOne(
+      { _id: id },
+      { $pull: { documents: { path: `/docs/${decodedDocName}` } } }
+    )
+    .then(() => {
+      res.status(200).json({ message: '✅ Xóa tài liệu thành công!' });
+    })
+    .catch((error) => {
+      console.error('❌ Lỗi khi cập nhật MongoDB:', error);
+      res.status(500).json({ message: 'Lỗi khi cập nhật dữ liệu!' });
+    });
+  });
 }
+
 
 viewDocument(req, res, next) {
   const { docName } = req.params;

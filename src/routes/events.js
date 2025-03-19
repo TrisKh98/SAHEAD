@@ -26,12 +26,16 @@ router.put(
 );
 
 router.delete('/:id/images/:imageName', eventsController.deleteSubImage);
-router.patch('/:id/mark-seen', eventsController.markAsSeen);
 router.patch('/:id/images/:imageName/approve', eventsController.updateApproveStatus);
 
 router.patch('/:id/documents/:docName/approve', eventsController.updateApproveDocStatus);
 router.delete('/:id/documents/:docName', eventsController.deleteDocument);
 router.get('/:id/documents/:docName/view', eventsController.viewDocument);
+
+router.patch('/:id/mark-seen', eventsController.markAsSeen);
+router.get('/:id/notifications', eventsController.getEventNotifications);
+
+
 
 
 router.get('/view', eventsController.view);

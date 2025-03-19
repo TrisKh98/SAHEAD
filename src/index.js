@@ -51,7 +51,8 @@ app.engine(
       },
       formatDate: (date) => {
         return date ? moment(date).tz('Asia/Ho_Chi_Minh').format('DD/MM/YYYY') : '';
-    }
+      },
+      
       
     },
   }),
