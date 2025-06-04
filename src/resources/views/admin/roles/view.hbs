@@ -1,0 +1,32 @@
+<div class='mt-4'>
+  <h3>Danh sách</h3>
+  <a href='/roles/trash'>Xem Thùng Rác</a>
+  <a href='/roles/create'>Thêm</a>
+  <table class='table mt-3'>
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col" >Tên</th>
+        <th>Hành Động</th>
+        
+      </tr>
+    </thead>
+    <tbody>
+      {{#each roles}}
+        <tr>
+          <td>{{@index}}</td>
+          <td class="event-name">
+            <a  class="vi">{{ this.vi_en.vi.name }}</a>
+            <a  class="en" style="display: none;">{{ this.vi_en.en.name }}</a>
+          </td>
+          <td>
+            <a href="/roles/{{this._id}}/edit" class="btn btn-info btn-sm">Sửa</a>
+            <form method="POST" action="/roles/{{this._id}}?_method=DELETE" style="display:inline;">
+              <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+            </form>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

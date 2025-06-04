@@ -1,28 +1,122 @@
-<form
-  method='POST'
-  action='/ourteam/{{ourteam._id}}?_method=PUT'
-  enctype='multipart/form-data'
-  class='border p-4 shadow rounded bg-light'
->
+<form id="ourForm" method='POST' action='/ourteam/{{our._id}}?_method=PUT' enctype='multipart/form-data' class='border p-4 shadow rounded bg-light'>
   <a href='/ourteam/view'>Xem</a>
   <label for='name'>Tên tv:</label>
-  <input type='text' name='name' value='{{{ourteam.name}}}' required />
+  <div id="formVi">
+        <h3>🇻🇳 Thông tin tiếng Việt</h3>
+        <div class="mb-3">
+            <label for="vi_name" class="form-label">Tên sự kiện</label>
+            <input type="text" id="vi_name" name="vi_name" class="form-control" value="{{ our.vi_en.vi.name }}">
+        </div>
+    </div>
+
+    <!-- Form Tiếng Anh -->
+    <div id="formEn" style="display: none;">
+        <h3>🇬🇧 English Information</h3>
+        <div class="mb-3">
+            <label for="en_name" class="form-label">Event Name</label>
+            <input type="text" name="en_name" id="en_name" class="form-control" value="{{ our.vi_en.en.name }}">
+        </div>
+    </div>
 
   <div class='mb-3'>
-    <label class='form-label fw-bold'>logo hiện tại:</label>
-    <div>
-      <img
-        src='{{ourteam.picture}}'
-        alt='logo'
-        class='img-thumbnail'
-        width='150'
-      />
-    </div>
-  </div>
-  <div class='mb-3'>
-    <label class='form-label fw-bold'>Ảnh:</label>
+    <label class='form-label fw-bold'>Ảnh hiện tại:</label>
+    <img src='{{our.image}}' class='img-thumbnail' width='150' />
+    <label class='form-label fw-bold'>Chọn hình ảnh mới:</label>
     <input type='file' class='form-control' name='image' accept='image/*' />
   </div>
+  
 
-  <button type='submit'>Sửa</button>
+  <div class="mb-3">
+      <label class="form-label fw-bold">Chọn Ban:</label>
+      {{#each sub}}
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="sub" value="{{this._id}}"
+          {{#if (includes ../our.sub this._id)}}checked{{/if}}>
+          <label class="form-check-label">
+            <span class="vi">{{this.vi_en.vi.name}}</span>
+            <span class="en" style="display: none;">{{this.vi_en.en.name}}</span>
+          </label>
+        </div>
+      {{/each}}
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-bold">Chọn chức vụ:</label>
+      {{#each position}}
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="position" value="{{this._id}}"
+          {{#if (includes ../our.position this._id)}}checked{{/if}}>
+          <label class="form-check-label">
+            <span class="vi">{{this.vi_en.vi.name}}</span>
+            <span class="en" style="display: none;">{{this.vi_en.en.name}}</span>
+          </label>
+        </div>
+      {{/each}}
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-bold">Chọn vai trò:</label>
+      {{#each roles}}
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="roles" value="{{this._id}}"
+          {{#if (includes ../our.roles this._id)}}checked{{/if}}>
+          <label class="form-check-label">
+            <span class="vi">{{this.vi_en.vi.name}}</span>
+            <span class="en" style="display: none;">{{this.vi_en.en.name}}</span>
+          </label>
+        </div>
+      {{/each}}
+    </div>
+
+    <div>
+      <label for="classify">Phân loại:</label>
+      <select id="classify" name="classify">
+        <option value="Ứng viên" {{#if (eq our.classify "Ứng viên")}}selected{{/if}}>Ứng viên</option>
+        <option value="Ban quản lý" {{#if (eq our.classify "Ban quản lý")}}selected{{/if}}>Ban quản lý</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="specialized">Chuyên ngành:</label>
+      <select id="specialized" name="specialized">
+        <option value="CN1" {{#if (eq our.specialized "CN1")}}selected{{/if}}>Công nghệ 1</option>
+        <option value="CN2" {{#if (eq our.specialized "CN2")}}selected{{/if}}>Công nghệ 2</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="degree">Trình độ:</label>
+      <select id="degree" name="degree">
+        <option value="None" {{#if (eq our.degree "None")}}selected{{/if}}>Không có</option>
+        <option value="Master" {{#if (eq our.degree "Master")}}selected{{/if}}>Thạc sĩ</option>
+        <option value="Associate Professor" {{#if (eq our.degree "Associate Professor")}}selected{{/if}}>Phó Giáo sư</option>
+        <option value="Professor" {{#if (eq our.degree "Professor")}}selected{{/if}}>Giáo sư</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="typeStudent">Loại sinh viên:</label>
+      <select id="typeStudent" name="typeStudent">
+        <option value="Quốc nội" {{#if (eq our.typeStudent "Quốc nội")}}selected{{/if}}>Quốc nội</option>
+        <option value="Quốc tế" {{#if (eq our.typeStudent "Quốc tế")}}selected{{/if}}>Quốc tế</option>
+      </select>
+    </div>
+
+
+  <input type="hidden" id="vi_en_json" name="vi_en_json">
+  <button type='submit'>Cập nhật TV</button>
 </form>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    document.getElementById("ourForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const viName = document.getElementById("vi_name").value.trim();
+        const enName = document.getElementById("en_name").value.trim();
+        const data = { 
+          vi: { name: viName }, 
+          en: { name: enName } 
+          };
+        document.getElementById("vi_en_json").value = JSON.stringify(data);
+        this.submit();
+    });
+});
+</script>

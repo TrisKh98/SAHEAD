@@ -1,4 +1,234 @@
-<div class='container mt-5'>
+<h2>Chỉnh Sửa Dự Án</h2>
+
+<!-- Nút chuyển đổi giữa form tiếng Việt & tiếng Anh -->
+<a href="/project/view" class="btn btn-success">Xem</a>
+
+<form id="projectForm" action="/project/{{project._id}}/update?_method=PUT" method="POST" enctype="multipart/form-data">
+    <!-- Form Tiếng Việt -->
+    <div id="formVi">
+        <h3>🇻🇳 Thông tin tiếng Việt</h3>
+        <div class="mb-3">
+            <label for="vi_name" class="form-label">Tên dự án</label>
+            <input type="text" id="vi_name" name="vi_name" class="form-control" value="{{project.vi_en.vi.name}}">
+        </div>
+        <div class="mb-3">
+            <label for="vi_overview" class="form-label">Tổng quan</label>
+            <textarea id="vi_overview" name="vi_overview" class="form-control">{{project.vi_en.vi.overview}}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="vi_general_goal" class="form-label">Mục tiêu chung</label>
+            <textarea id="vi_general_goal" name="vi_general_goal" class="form-control">{{project.vi_en.vi.general_goal}}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="vi_specific_goal" class="form-label">Mục tiêu cụ thể</label>
+            <textarea id="vi_specific_goal" name="vi_specific_goal" class="form-control">{{project.vi_en.vi.specific_goal}}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="vi_outcomes" class="form-label">Kết quả đạt được</label>
+            <textarea id="vi_outcomes" name="vi_outcomes" class="form-control">{{project.vi_en.vi.outcomes}}</textarea>
+        </div>
+    </div>
+
+    <!-- Form Tiếng Anh -->
+    <div id="formEn" style="display: none;">
+        <h3>🇬🇧 English Information</h3>
+        <div class="mb-3">
+            <label for="en_name" class="form-label">Project Name</label>
+            <input type="text" id="en_name" name="en_name" class="form-control" value="{{project.vi_en.en.name}}">
+        </div>
+        <div class="mb-3">
+            <label for="en_overview" class="form-label">Overview</label>
+            <textarea id="en_overview" name="en_overview" class="form-control">{{project.vi_en.en.overview}}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="en_general_goal" class="form-label">General Goal</label>
+            <textarea id="en_general_goal" name="en_general_goal" class="form-control">{{project.vi_en.en.general_goal}}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="en_specific_goal" class="form-label">Specific Goal</label>
+            <textarea id="en_specific_goal" name="en_specific_goal" class="form-control">{{project.vi_en.en.specific_goal}}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="en_outcomes" class="form-label">Expected Outcomes</label>
+            <textarea id="en_outcomes" name="en_outcomes" class="form-control">{{project.vi_en.en.outcomes}}</textarea>
+        </div>
+    </div>
+
+    <div class='mb-3'>
+        <label class='form-label fw-bold' id="timelineColumn">Thời gian:</label>
+        <small class="text-muted">
+          {{formatDate project.timeline.startDate 'DD/MM/YYYY'}}-{{formatDate project.timeline.endDate 'DD/MM/YYYY'}}
+        </small>
+        <input type='date' class='form-control' name='startDate' value="{{formatDate project.timeline.startDate 'DD/MM/YYYY'}}" />
+        <input type='date' class='form-control mt-2' name='endDate' value="{{formatDate project.timeline.endDate 'DD/MM/YYYY'}}" />
+    </div>
+
+    <!-- Hiển thị ảnh hiện tại -->
+    {{#if project.image}}
+    <div class="mb-3">
+        <label class="form-label" id="currentImage">Ảnh hiện tại:</label>
+        <div>
+            <img src="{{project.image}}" alt="Ảnh dự án" class="img-thumbnail" width="150">
+        </div>
+    </div>
+    {{/if}}
+
+    <!-- Chọn ảnh mới -->
+    <div class="mb-3">
+        <label for="image" class="form-label" id="newImage">Chọn ảnh</label>
+        <input type="file" name="image" class="form-control" accept="image/*">
+    </div>
+
+    <div class='mb-3'>
+      <label class='form-label fw-bold'>Ảnh phụ:</label>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        {{#each project.images}}
+          <div style="position:relative;">
+            <img src="{{this.path}}" alt="Ảnh phụ" class="img-thumbnail" width="100">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              
+              <button class="btn btn-danger btn-sm delete-subimage" 
+                      data-id="{{../project._id}}" 
+                      data-name="{{getFileName this.path}}">X</button>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+      <input
+        type='file'
+        class='form-control mt-2'
+        name='images'
+        accept='image/*'
+        multiple
+      />  
+    </div>
+
+    <input type="hidden" id="vi_en_json" name="vi_en_json">
+
+    <button type="submit" class="btn btn-success" id="update">Cập Nhật</button>
+</form>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const deleteButtons = document.querySelectorAll('.delete-subimage');
+  deleteButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            const projectId = button.getAttribute('data-id');
+            const imageName = button.getAttribute('data-name');
+
+            if (confirm('Bạn chắc chắn muốn xóa ảnh này?')) {
+                fetch(`/project/${projectId}/images/${encodeURIComponent(imageName)}`, {
+                    method: 'DELETE'
+                })
+
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Xóa ảnh thất bại!');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                    window.location.reload(); // Tải lại trang sau khi xóa
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                    alert(`Lỗi xảy ra: ${error.message}`);
+                });
+            }
+        });
+    });  
+    console.log('Project ID:', projectId);
+console.log('Image Name:', imageName);
+
+    {{!-- const formVi = document.getElementById("formVi");
+    const formEn = document.getElementById("formEn");
+    const btnVi = document.getElementById("switchToVi");
+    const btnEn = document.getElementById("switchToEn");
+
+   // Hàm cập nhật giao diện theo ngôn ngữ đã chọn
+    function updateLanguage(lang) {
+        if (lang === "vi") {
+            formVi.style.display = "block";
+            formEn.style.display = "none";
+        } else {
+            formVi.style.display = "none";
+            formEn.style.display = "block";
+        }
+    }
+
+    // Khi nhấn nút Tiếng Việt
+    btnVi.addEventListener("click", function (event) {
+        event.preventDefault(); // Ngăn reload trang
+        localStorage.setItem("selectedLanguage", "vi"); // Lưu vào localStorage
+        updateLanguage("vi");
+    });
+
+    // Khi nhấn nút Tiếng Anh
+    btnEn.addEventListener("click", function (event) {
+        event.preventDefault(); // Ngăn reload trang
+        localStorage.setItem("selectedLanguage", "en"); // Lưu vào localStorage
+        updateLanguage("en");
+    });
+
+    // Lấy ngôn ngữ đã lưu từ localStorage và cập nhật giao diện
+    const savedLanguage = localStorage.getItem("selectedLanguage") || "vi";
+    updateLanguage(savedLanguage); --}}
+
+    // Xử lý submit form
+    document.getElementById("projectForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        // Lấy nội dung từ CKEditor
+        const viName = document.getElementById("vi_name").value.trim();
+        const enName = document.getElementById("en_name").value.trim();
+        const viOverview = CKEDITOR.instances.vi_overview.getData().trim();
+        const enOverview = CKEDITOR.instances.en_overview.getData().trim();
+        const viGeneralGoal = CKEDITOR.instances.vi_general_goal.getData().trim();
+        const enGeneralGoal = CKEDITOR.instances.en_general_goal.getData().trim();
+        const viSpecificGoal = CKEDITOR.instances.vi_specific_goal.getData().trim();
+        const enSpecificGoal = CKEDITOR.instances.en_specific_goal.getData().trim();
+        const viOutcomes = CKEDITOR.instances.vi_outcomes.getData().trim();
+        const enOutcomes = CKEDITOR.instances.en_outcomes.getData().trim();
+
+        // Kiểm tra ít nhất một tên dự án có dữ liệu
+        if (!viName && !enName) {
+            alert("Vui lòng nhập ít nhất một trong hai tên dự án (Tiếng Việt hoặc Tiếng Anh).");
+            return;
+        }
+
+        // Chuẩn bị dữ liệu JSON đầy đủ
+        const data = {
+            vi: { 
+                name: viName, 
+                overview: viOverview, 
+                general_goal: viGeneralGoal, 
+                specific_goal: viSpecificGoal, 
+                outcomes: viOutcomes 
+            },
+            en: { 
+                name: enName, 
+                overview: enOverview, 
+                general_goal: enGeneralGoal, 
+                specific_goal: enSpecificGoal, 
+                outcomes: enOutcomes 
+            }
+        };
+
+        // Gán JSON vào input hidden
+        document.getElementById("vi_en_json").value = JSON.stringify(data);
+        
+        // Submit form
+        this.submit();
+    });
+});
+</script>
+
+
+{{!-- <div class='container mt-5'>
   <h2 class='text-center text-primary'>Sửa Project</h2>
   <form
     method='POST'
@@ -94,4 +324,4 @@
 
     <button type='submit' class='btn btn-primary w-100 mt-3'>Lưu thay đổi</button>
   </form>
-</div>
+</div> --}}

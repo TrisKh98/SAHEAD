@@ -1,21 +1,28 @@
+<form action="/events/search" method="GET">
+      <input type="text" name="keyword" placeholder="Nhập tên cần tìm..." value="{{keyword}}">
+      <button type="submit">Tìm kiếm</button>
+    </form>
+
 <form name="container-form" method="GET" class="mt-4">
-    <h3>my khoa</h3>
+    <h3>Danh sách sự kiện</h3>
     
     <a href="/events/create">Tạo [{{ deletedCount }}]</a>
     <a href="/events/trash">Thùng rác [{{ deletedCount }}]</a>
+
     <table class="table">
         <thead>
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">Hinhanh</th>
-                <th scope="col">Ten</th>
-                
-                <th scope="col">Mota</th>
+                <th scope="col" id="image">Hình ảnh</th>
+                <th scope="col" id="eventNameColumn">Tên Sự Kiện</th>
+                <th scope="col" id="overviewColumn">Mô tả</th>
+                {{!-- <th scope="col">Loại</th> --}}
+                <th scope="col">Loại</th>
                 <th scope="col"></th>
-                <th>Thongbao</th>
-                <th scope="col">Ngaydang</th>
+                <th>Thông báo</th>
+                <th scope="col">Ngày đăng</th>
                 
-                <th></th>
+                <th id="Action">Hành động</th>
             </tr>
         </thead>
         <tbody>
@@ -26,11 +33,37 @@
                 <td>
                     <img src="{{this.image}}" alt="{{this.name}}" width="300">
                 </td>
-                <td>
-                    <a href="/events/{{ slug }}/detail">{{this.name}}</a>
-                </td>
+                  <td class="event-name">
+                      <a href="/events/{{ this.slug_vi }}/detail" class="vi">{{ this.vi_en.vi.name }}</a>
+                    <a href="/events/{{ this.slug_en }}/detail" class="en" style="display: none;">{{ this.vi_en.en.name }}</a>
+                  </td>
+                  <td class="event-overview">
+                      <span class="vi">{{{this.vi_en.vi.overview}}}</span>
+                      <span class="en" style="display: none;">{{{this.vi_en.en.overview}}}</span>
+                  </td>
+
+                {{!-- <td>
+                  <form method="POST"
+                        action='/events/{{event._id}}?_method=PUT'
+                        enctype='multipart/form-data'
+                        class='border p-4 shadow rounded bg-light'>
+                      <input type="hidden" name="id" value="{{this._id}}">
+                      <select class="form-control news-event-select" name="news_event" onchange="this.form.submit()">
+                          <option value="0" {{#if (eq this.news_event 0)}}selected{{/if}}>Không chọn</option>
+                          <option value="1" {{#if (eq this.news_event 1)}}selected{{/if}}>News</option>
+                          <option value="2" {{#if (eq this.news_event 2)}}selected{{/if}}>Events</option>
+                      </select>
+                  </form>
+                </td> --}}
                 
-                <td>{{{this.overview}}}</td>
+
+                <td><p>Loại: {{ this.type.name }}
+                  {{!-- {{#if (eq this.type "events")}}Sự kiện{{/if}}
+                  {{#if (eq this.type "news")}}Tin tức{{/if}}
+                  {{#if (eq this.type "course")}}Khóa học{{/if}}
+                  {{#if (eq this.type "cooperate")}}Hợp tác{{/if}} --}}
+                </p></td>
+
                 <td>
                   <a href="{{ this.url }}">Xem thêm</a>
                 </td>
@@ -199,6 +232,12 @@
             .catch(err => console.error('Lỗi:', err));
           });
         });
+
+      document.querySelectorAll('.news-event-select').forEach(select => {
+          select.addEventListener('change', function () {
+              this.closest('form').submit(); // Tự động gửi form khi chọn giá trị mới
+          });
+      });
 
     });
 

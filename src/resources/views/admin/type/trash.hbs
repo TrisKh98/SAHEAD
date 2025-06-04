@@ -1,0 +1,32 @@
+<div class='mt-4'>
+  <h3>Thùng Rác Tags</h3>
+   <a href='/events/type/view'>Xem</a>
+  <table class='table mt-3'>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Tên </th>
+        <th>Hành Động</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each Type}}
+      {{#if deleted}}
+        <tr>
+          <td>{{@index}}</td>
+          <td>{{this.name}}</td>
+          
+          <td>
+            <form method="POST" action="/events/type/{{this._id}}/restore?_method=PATCH" style="display:inline;">
+              <button type="submit" class="btn btn-success btn-sm">Khôi phục</button>
+            </form>
+            <form method="POST" action="/events/type/{{this._id}}/force?_method=DELETE" style="display:inline;">
+              <button type="submit" class="btn btn-danger btn-sm">Xóa Vĩnh Viễn</button>
+            </form>
+          </td>
+        </tr>
+        {{/if}}
+      {{/each}}
+    </tbody>
+  </table>
+</div>

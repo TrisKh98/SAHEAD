@@ -9,7 +9,7 @@ const Partner = new Schema(
     name: { type: String, required: true },
     logo: { type: String, default: '' },
     link: { type: String, default: '' },
-    project: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
+    type: { type: String, enum: ['Edu', 'Business'], default: 'Edu' },
   },
   {
     timestamps: true,

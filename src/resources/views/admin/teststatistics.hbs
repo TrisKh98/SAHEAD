@@ -1,0 +1,425 @@
+<a href='/statis/view'>Xem</a>
+
+{{!-- <form method="GET" action="/statis/auto">
+  <label for="year">Năm:</label>
+  <select name="year" id="year" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedYear "all")}}selected{{/if}}>Tất cả</option>
+    {{#each availableYears}}
+      <option value="{{this}}" {{#if (eq this ../selectedYear)}}selected{{/if}}>{{this}}</option>
+    {{/each}}
+  </select>
+
+  <label for="mode">Phân loại:</label>
+  <select name="mode" id="mode" onchange="this.form.submit()">
+    <option value="candidate" {{#if (eq selectedMode "candidate")}}selected{{/if}}>Thống kê ứng viên</option>
+    <option value="event" {{#if (eq selectedMode "event")}}selected{{/if}}>Thống kê sự kiện</option>
+    <option value="room" {{#if (eq selectedMode "room")}}selected{{/if}}>Thống kê cơ sở vật chất</option>
+  </select>
+
+  <label for="type">Loại sự kiện:</label>
+  <select name="type" id="type" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedType "all")}}selected{{/if}}>Tất cả</option>
+    {{#each types}}
+      <option value="{{this._id}}" {{#if (eq this._id ../selectedType)}}selected{{/if}}>{{this.name}}</option>
+    {{/each}}
+  </select>
+
+  <!-- Loại sự kiện: Trong nước / Ngoài nước -->
+  <label for="eventType">Loại sự kiện:</label>
+  <select name="eventType" id="eventType" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedEventType "all")}}selected{{/if}}>Tất cả</option>
+    <option value="Trong nước" {{#if (eq selectedEventType "Trong nước")}}selected{{/if}}>Trong nước</option>
+    <option value="Ngoài nước" {{#if (eq selectedEventType "Ngoài nước")}}selected{{/if}}>Ngoài nước</option>
+  </select>
+
+  <!-- Ngôn ngữ khóa học -->
+  <label for="courseLanguage">Ngôn ngữ:</label>
+  <select name="courseLanguage" id="courseLanguage" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedCourseLanguage "all")}}selected{{/if}}>Tất cả</option>
+    <option value="Anh" {{#if (eq selectedCourseLanguage "Anh")}}selected{{/if}}>Anh</option>
+    <option value="Hàn Quốc" {{#if (eq selectedCourseLanguage "Hàn Quốc")}}selected{{/if}}>Hàn Quốc</option>
+  </select>
+
+  <!-- Trạng thái -->
+  <label for="status">Trạng thái:</label>
+  <select name="status" id="status" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedStatus "all")}}selected{{/if}}>Tất cả</option>
+    <option value="Đã xuất bản" {{#if (eq selectedStatus "Đã xuất bản")}}selected{{/if}}>Đã xuất bản</option>
+    <option value="Đang thực hiện" {{#if (eq selectedStatus "Đang thực hiện")}}selected{{/if}}>Đang thực hiện</option>
+  </select>
+
+  {{#if (eq selectedMode "candidate")}}
+
+    <!-- Phân loại -->
+    <label for="classify">Loại thành viên:</label>
+    <select name="classify" id="classify" onchange="this.form.submit()">
+      <option value="all" {{#if (eq selectedClassify "all")}}selected{{/if}}>Tất cả</option>
+      <option value="Ứng viên" {{#if (eq selectedClassify "Ứng viên")}}selected{{/if}}>Ứng viên</option>
+      <option value="Ban quản lý" {{#if (eq selectedClassify "Ban quản lý")}}selected{{/if}}>Ban quản lý</option>
+    </select>
+
+    <!-- Chuyên ngành -->
+    <label for="specialized">Chuyên ngành:</label>
+    <select name="specialized" id="specialized" onchange="this.form.submit()">
+      <option value="all" {{#if (eq selectedSpecialized "all")}}selected{{/if}}>Tất cả</option>
+      <option value="CN1" {{#if (eq selectedSpecialized "CN1")}}selected{{/if}}>CN1</option>
+      <option value="CN2" {{#if (eq selectedSpecialized "CN2")}}selected{{/if}}>CN2</option>
+    </select>
+
+    <!-- Trình độ -->
+    <label for="degree">Trình độ:</label>
+    <select name="degree" id="degree" onchange="this.form.submit()">
+      <option value="all" {{#if (eq selectedDegree "all")}}selected{{/if}}>Tất cả</option>
+      <option value="None" {{#if (eq selectedDegree "None")}}selected{{/if}}>Không</option>
+      <option value="Master" {{#if (eq selectedDegree "Master")}}selected{{/if}}>Thạc sĩ</option>
+      <option value="Associate Professor" {{#if (eq selectedDegree "Associate Professor")}}selected{{/if}}>Phó Giáo sư</option>
+      <option value="Professor" {{#if (eq selectedDegree "Professor")}}selected{{/if}}>Giáo sư</option>
+    </select>
+
+    <!-- Loại sinh viên -->
+    <label for="typeStudent">Loại sinh viên:</label>
+    <select name="typeStudent" id="typeStudent" onchange="this.form.submit()">
+      <option value="all" {{#if (eq selectedTypeStudent "all")}}selected{{/if}}>Tất cả</option>
+      <option value="Quốc tế" {{#if (eq selectedTypeStudent "Quốc tế")}}selected{{/if}}>Quốc tế</option>
+      <option value="Quốc nội" {{#if (eq selectedTypeStudent "Quốc nội")}}selected{{/if}}>Quốc nội</option>
+    </select>
+
+  {{/if}}
+  {{#if (eq selectedMode "room")}}
+  <h4>Thống kê cơ sở vật chất</h4>
+  <form method="GET" action="/statis/auto">
+    <input type="hidden" name="mode" value="room" />
+    <label for="roomStatus">Chọn trạng thái phòng:</label>
+    <select name="roomStatus" id="roomStatus" onchange="this.form.submit()">
+      <option value="all" {{#if (eq selectedRoomStatus 'all')}}selected{{/if}}>Tất cả</option>
+      {{#each allStatuses}}
+        <option value="{{this}}" {{#if (eq ../selectedRoomStatus this)}}selected{{/if}}>{{this}}</option>
+      {{/each}}
+    </select>
+  </form>
+  
+  <p>
+    {{#if (eq selectedRoomStatus "all")}}
+      Tổng số phòng (mọi trạng thái): {{totalRooms}}
+    {{else}}
+      Tổng số phòng có trạng thái "{{selectedRoomStatus}}": {{totalRooms}}
+    {{/if}}
+  </p>
+{{/if}}
+
+
+</form>
+{{#if (eq selectedMode "candidate")}}
+  <p>Tổng số ứng viên: <strong>{{totalCandidates}}</strong></p>
+{{else if (eq selectedMode "room")}}
+  <p>Tổng số phòng: <strong>{{totalRooms}}</strong></p>
+{{else}}
+  <p>Tổng số sự kiện: <strong>{{totalEvents}}</strong></p>
+{{/if}}
+ --}}
+<!-- Phần chọn mode (dùng chung cho cả 3) -->
+<form method="GET" action="/statis/auto">
+  <label for="mode">Phân loại:</label>
+  <select name="mode" id="mode" onchange="this.form.submit()">
+    <option value="candidate" {{#if (eq selectedMode "candidate")}}selected{{/if}}>Thống kê ứng viên</option>
+    <option value="event" {{#if (eq selectedMode "event")}}selected{{/if}}>Thống kê sự kiện</option>
+    <option value="room" {{#if (eq selectedMode "room")}}selected{{/if}}>Thống kê cơ sở vật chất</option>
+    <option value="equipment" {{#if (eq selectedMode "equipment")}}selected{{/if}}>Thống kê thiết bị</option>
+  </select>
+  
+</form>
+
+<hr>
+
+{{!-- ================== CANDIDATE MODE ================== --}}
+{{#if (eq selectedMode "candidate")}}
+<form method="GET" action="/statis/auto">
+  <input type="hidden" name="mode" value="candidate" />
+
+  <label for="year">Năm:</label>
+  <select name="year" id="year" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedYear "all")}}selected{{/if}}>Tất cả</option>
+    {{#each availableYears}}
+      <option value="{{this}}" {{#if (eq this ../selectedYear)}}selected{{/if}}>{{this}}</option>
+    {{/each}}
+  </select>
+
+  <label for="type">Loại sự kiện:</label>
+  <select name="type" id="type" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedType "all")}}selected{{/if}}>Tất cả</option>
+    {{#each types}}
+      <option value="{{this._id}}" {{#if (eq this._id ../selectedType)}}selected{{/if}}>{{this.name}}</option>
+    {{/each}}
+  </select>
+
+  <label for="classify">Loại thành viên:</label>
+  <select name="classify" id="classify" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedClassify "all")}}selected{{/if}}>Tất cả</option>
+    <option value="Ứng viên" {{#if (eq selectedClassify "Ứng viên")}}selected{{/if}}>Ứng viên</option>
+    <option value="Ban quản lý" {{#if (eq selectedClassify "Ban quản lý")}}selected{{/if}}>Ban quản lý</option>
+  </select>
+
+  <label for="specialized">Chuyên ngành:</label>
+  <select name="specialized" id="specialized" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedSpecialized "all")}}selected{{/if}}>Tất cả</option>
+    <option value="CN1" {{#if (eq selectedSpecialized "CN1")}}selected{{/if}}>CN1</option>
+    <option value="CN2" {{#if (eq selectedSpecialized "CN2")}}selected{{/if}}>CN2</option>
+  </select>
+
+  <label for="degree">Trình độ:</label>
+  <select name="degree" id="degree" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedDegree "all")}}selected{{/if}}>Tất cả</option>
+    <option value="None" {{#if (eq selectedDegree "None")}}selected{{/if}}>Không</option>
+    <option value="Master" {{#if (eq selectedDegree "Master")}}selected{{/if}}>Thạc sĩ</option>
+    <option value="Associate Professor" {{#if (eq selectedDegree "Associate Professor")}}selected{{/if}}>Phó Giáo sư</option>
+    <option value="Professor" {{#if (eq selectedDegree "Professor")}}selected{{/if}}>Giáo sư</option>
+  </select>
+
+  <label for="typeStudent">Loại sinh viên:</label>
+  <select name="typeStudent" id="typeStudent" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedTypeStudent "all")}}selected{{/if}}>Tất cả</option>
+    <option value="Quốc tế" {{#if (eq selectedTypeStudent "Quốc tế")}}selected{{/if}}>Quốc tế</option>
+    <option value="Quốc nội" {{#if (eq selectedTypeStudent "Quốc nội")}}selected{{/if}}>Quốc nội</option>
+  </select>
+</form>
+
+<p>Tổng số ứng viên: <strong>{{totalCandidates}}</strong></p>
+{{/if}}
+
+{{!-- ================== EVENT MODE ================== --}}
+{{#if (eq selectedMode "event")}}
+<form method="GET" action="/statis/auto">
+  <input type="hidden" name="mode" value="event" />
+
+  <label for="year">Năm:</label>
+  <select name="year" id="year" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedYear "all")}}selected{{/if}}>Tất cả</option>
+    {{#each availableYears}}
+      <option value="{{this}}" {{#if (eq this ../selectedYear)}}selected{{/if}}>{{this}}</option>
+    {{/each}}
+  </select>
+
+  <label for="type">Loại sự kiện:</label>
+  <select name="type" id="type" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedType "all")}}selected{{/if}}>Tất cả</option>
+    {{#each types}}
+      <option value="{{this._id}}" {{#if (eq this._id ../selectedType)}}selected{{/if}}>{{this.name}}</option>
+    {{/each}}
+  </select>
+
+  <label for="eventType">Loại sự kiện:</label>
+  <select name="eventType" id="eventType" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedEventType "all")}}selected{{/if}}>Tất cả</option>
+    <option value="Trong nước" {{#if (eq selectedEventType "Trong nước")}}selected{{/if}}>Trong nước</option>
+    <option value="Ngoài nước" {{#if (eq selectedEventType "Ngoài nước")}}selected{{/if}}>Ngoài nước</option>
+  </select>
+
+  <label for="courseLanguage">Ngôn ngữ:</label>
+  <select name="courseLanguage" id="courseLanguage" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedCourseLanguage "all")}}selected{{/if}}>Tất cả</option>
+    <option value="Anh" {{#if (eq selectedCourseLanguage "Anh")}}selected{{/if}}>Anh</option>
+    <option value="Hàn Quốc" {{#if (eq selectedCourseLanguage "Hàn Quốc")}}selected{{/if}}>Hàn Quốc</option>
+  </select>
+
+  <label for="status">Trạng thái:</label>
+  <select name="status" id="status" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedStatus "all")}}selected{{/if}}>Tất cả</option>
+    <option value="Đã xuất bản" {{#if (eq selectedStatus "Đã xuất bản")}}selected{{/if}}>Đã xuất bản</option>
+    <option value="Đang thực hiện" {{#if (eq selectedStatus "Đang thực hiện")}}selected{{/if}}>Đang thực hiện</option>
+  </select>
+</form>
+
+<p>Tổng số sự kiện: <strong>{{totalEvents}}</strong></p>
+{{/if}}
+
+{{!-- ================== ROOM MODE ================== --}}
+{{#if (eq selectedMode "room")}}
+<h4>Thống kê cơ sở vật chất</h4>
+<form method="GET" action="/statis/auto">
+  <input type="hidden" name="mode" value="room" />
+
+    <label for="year">Chọn năm:</label>
+    <select name="year" id="year" onchange="this.form.submit()">
+      <option value="all" {{#if (eq selectedYear 'all')}}selected{{/if}}>Tất cả</option>
+      {{#each availableYearsR}}
+        <option value="{{this}}" {{#if (eq ../selectedYear this)}}selected{{/if}}>{{this}}</option>
+      {{/each}}
+    </select>
+
+  <label for="roomStatus">Chọn trạng thái phòng:</label>
+  <select name="roomStatus" id="roomStatus" onchange="this.form.submit()">
+    <option value="all" {{#if (eq selectedRoomStatus 'all')}}selected{{/if}}>Tất cả</option>
+    {{#each allStatuses}}
+      <option value="{{this}}" {{#if (eq ../selectedRoomStatus this)}}selected{{/if}}>{{this}}</option>
+    {{/each}}
+  </select>
+
+</form>
+
+<p>
+  {{#if (eq selectedRoomStatus "all")}}
+    Tổng số phòng (mọi trạng thái): {{totalRooms}}
+  {{else}}
+    Tổng số phòng có trạng thái "{{selectedRoomStatus}}": {{totalRooms}}
+  {{/if}}
+</p>
+{{/if}}
+
+{{!-- ================== EQUIPMENT MODE ================== --}}
+{{#if (eq selectedMode "equipment")}}
+  <h4>Thống kê thiết bị theo trạng thái phòng</h4>
+
+  <form method="GET">
+    <input type="hidden" name="mode" value="equipment" />
+    <label for="year">Chọn năm:</label>
+    <select name="year" id="year" onchange="this.form.submit()">
+      <option value="all" {{#if (eq selectedYear 'all')}}selected{{/if}}>Tất cả</option>
+      {{#each availableYearsR}}
+        <option value="{{this}}" {{#if (eq ../selectedYear this)}}selected{{/if}}>{{this}}</option>
+      {{/each}}
+    </select>
+
+
+
+    <label for="roomStatus">Chọn trạng thái phòng:</label>
+    <select name="roomStatus" id="roomStatus" onchange="this.form.submit()">
+      <option value="all" {{#if (eq selectedRoomStatus 'all')}}selected{{/if}}>Tất cả</option>
+      {{#each allStatuses}}
+        <option value="{{this}}" {{#if (eq ../selectedRoomStatus this)}}selected{{/if}}>{{this}}</option>
+      {{/each}}
+    </select>
+  </form>
+
+  <p>
+    {{#if (eq selectedRoomStatus "all")}}
+      Tổng số thiết bị từ mọi phòng: <strong>{{totalEquipment}}</strong>
+    {{else}}
+      Tổng số thiết bị trong phòng trạng thái "{{selectedRoomStatus}}": <strong>{{totalEquipment}}</strong>
+    {{/if}}
+  </p>
+
+{{/if}}
+
+
+
+
+
+<form id="subForm" method="POST" action="/statis/store">
+  <input type="hidden" name="mode" value="{{selectedMode}}">
+  <table class="table table-bordered">
+  <thead class="table-dark">
+    <tr>
+      <th></th>
+      <th>Năm</th>
+      <th>Hoạt động</th>
+      <th>Số liệu</th>
+      <th>Giá trị</th>
+      <th>Đơn vị</th>
+      <th>Hành động</th>
+    </tr>
+  </thead>
+  <tr>
+    <td></td>
+    <td><input type="text" class="form-control" name="nam" value="{{ selectedYear }}"></td>
+    <td><input type="text" class="form-control" name="hoat_dong"></td>
+    <td>
+      <div id="formVi">
+        <div class="mb-3">
+          <input type="text" class="form-control" name="vi_chi_so" id="vi_chi_so"
+            value="{{#if (eq selectedMode 'event')}}Sự kiện
+                  {{else if (eq selectedClassify 'all')}}Người tham gia
+                  {{else}}{{selectedClassify}}{{/if}}">
+        </div>
+      </div>
+
+      <div id="formEn" style="display: none;">
+        <div class="mb-3">
+          <input type="text" name="en_chi_so" id="en_chi_so" class="form-control">
+        </div>
+      </div>
+      {{!-- <input type="text" class="form-control" name="chi_so" 
+        value="{{#if (eq selectedMode 'event')}}Sự kiện
+              {{else if (eq selectedClassify 'all')}}Người tham gia
+              {{else}}{{selectedClassify}}{{/if}}"> --}}
+    </td>
+    <td><input type="number" class="form-control" name="gia_tri" value="{{totalCandidates}}{{totalEvents}}"></td>
+    <td>
+      <div id="formVi">
+        <div class="mb-3">
+          <input type="text" class="form-control" name="vi_don_vi" id="vi_don_vi"
+            value="{{#if (eq selectedMode 'event')}}Sự kiện
+                  {{else if (eq selectedClassify 'all')}}Người tham gia
+                  {{else}}{{selectedClassify}}{{/if}}">
+        </div>
+      </div>
+
+      <div id="formEn" style="display: none;">
+        <div class="mb-3">
+          <input type="text" name="en_don_vi" id="en_don_vi" class="form-control">
+        </div>
+      </div>
+      {{!-- <input type="text" class="form-control" name="don_vi"> --}}
+    </td>
+    <input type="hidden" id="vi_en_json" name="vi_en_json">
+    <td><button type="submit" class="btn btn-primary">Lưu thống kê</button></td>
+  </tr>
+</table>
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // 🔁 Mapping giá trị tiếng Việt sang tiếng Anh cho en_chi_so
+    const classifyMap = {
+    "Sự kiện": "Event",
+    "Người tham gia": "Participants",
+    "Ứng viên": "Candidate",
+    "Ban quản lý": "Management"
+  };
+
+  function bindViToEn(viSelector, enSelector) {
+    const viInput = document.querySelector(viSelector);
+    const enInput = document.querySelector(enSelector);
+
+    if (viInput && enInput) {
+      const viValue = viInput.value.trim();
+      enInput.value = classifyMap[viValue] || "";
+
+      viInput.addEventListener("input", () => {
+        const newVal = viInput.value.trim();
+        enInput.value = classifyMap[newVal] || "";
+      });
+    }
+  }
+
+  // Gắn cho từng cặp
+  bindViToEn('input[name="vi_chi_so"]', 'input[name="en_chi_so"]');
+  bindViToEn('input[name="vi_don_vi"]', 'input[name="en_don_vi"]');
+
+    document.getElementById("subForm").addEventListener("submit", function(event) {
+          event.preventDefault();
+          const viCH = document.getElementById("vi_chi_so").value.trim();
+          const enCH = document.getElementById("en_chi_so").value.trim();
+          const viDV = document.getElementById("vi_don_vi").value.trim();
+          const enDV = document.getElementById("en_don_vi").value.trim();
+          const data = { 
+            vi: { chi_so: viCH, don_vi:viDV }, 
+            en: { chi_so: enCH, don_vi:enDV } 
+            };
+          document.getElementById("vi_en_json").value = JSON.stringify(data);
+          this.submit();
+    });
+});
+
+  const saveInputs = () => {
+    localStorage.setItem("hoat_dong", document.querySelector('input[name="hoat_dong"]').value);
+  };
+
+  const restoreInputs = () => {
+    if (localStorage.getItem("hoat_dong"))
+      document.querySelector('input[name="hoat_dong"]').value = localStorage.getItem("hoat_dong");
+  };
+
+  window.addEventListener('beforeunload', saveInputs);
+  window.addEventListener('DOMContentLoaded', restoreInputs);
+
+</script>

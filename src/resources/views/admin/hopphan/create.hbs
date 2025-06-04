@@ -1,21 +1,56 @@
 <div class='mt-4'>
-  <h3>Thêm Hợp phần</h3>
+  <h3>Thêm Tag</h3>
   <a href='/hopphan/view'>Xem</a>
-  <form method='POST' action='/hopphan/store'>
-    <div class='mb-3'>
-      <label for='name' class='form-label'>Tag Name</label>
-      <input type='text' class='form-control' id='name' name='name' required />
-    </div>
-    <div class='mb-3'>
-      <label class='form-label fw-bold'>Nội dung:</label>
-      <textarea class='form-control' name='content'></textarea>
-    </div>
-    <div class='mb-3'>
-      <label class='form-label fw-bold'>Thời gian:</label>
-      <input type='date' class='form-control' name='startDate' />
-      <input type='date' class='form-control mt-2' name='endDate' />
+  <form  id="hpForm" method='POST' action='/hopphan/store'>
+    <div id="formVi">
+        <h3>🇻🇳 Thông tin tiếng Việt</h3>
+        <div class="mb-3">
+            <label for="vi_name" class="form-label">Tên hợp phần</label>
+            <input type="text" id="vi_name" name="vi_name" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="vi_content" class="form-label">Nội dung</label>
+            <textarea id="vi_content" name="vi_content" class="form-control"></textarea>
+        </div>
     </div>
 
+    <!-- Form Tiếng Anh -->
+    <div id="formEn" style="display: none;">
+        <h3>🇬🇧 English Information</h3>
+        <div class="mb-3">
+            <label for="en_name" class="form-label">HP Name</label>
+            <input type="text" name="en_name" id="en_name" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="en_content" class="form-label">Content</label>
+            <textarea id="en_content" name="en_content" class="form-control"></textarea>
+        </div>
+    </div>
+    <div class='mb-3'>
+        <label class='form-label fw-bold' id="timelineColumn">Thời gian:</label>
+        <input type='date' class='form-control' name='startDate' />
+        <input type='date' class='form-control mt-2' name='endDate' />
+    </div>
+
+    <input type="hidden" id="vi_en_json" name="vi_en_json">
     <button type='submit' class='btn btn-primary'>Thêm</button>
   </form>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    document.getElementById("hpForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const viName = document.getElementById("vi_name").value.trim();
+        const enName = document.getElementById("en_name").value.trim();
+        const vicontent = CKEDITOR.instances.vi_content.getData().trim();
+        const encontent = CKEDITOR.instances.en_content.getData().trim();
+        const data = { 
+          vi: { name: viName, content: vicontent }, 
+          en: { name: enName, content: encontent } 
+          };
+        document.getElementById("vi_en_json").value = JSON.stringify(data);
+        this.submit();
+    });
+});
+</script>

@@ -1,21 +1,29 @@
 const mongoose = require('mongoose');
 const slug = require('mongoose-slug-updater');
 const mongooseDelete = require('mongoose-delete');
-
+const bcryptjs = require('bcryptjs');
 const Schema = mongoose.Schema;
 
 const Account = new Schema(
   {
-    name: { type: String, required: true },
-    mail: { type: String, default: '' },
-    password: { type: String, default: '' },
+    name: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
     slug: { type: String, slug: 'name', unique: true },
-    permissions: { type: Number, default: 0 },
+    role: { type: Number, default: 2 },
   },
   {
     timestamps: true,
   },
 );
+
+Account.pre("save", function(next){
+  const account = this;
+  if (account.password){
+      account.password = bcryptjs.hashSync(account.password, 10);
+  }
+  next();
+})
+
 // Add plugin
 mongoose.plugin(slug);
 Account.plugin(mongooseDelete, {

@@ -1,0 +1,25 @@
+<h2>Toàn bộ ảnh thuộc Hợp phần</h2>
+<a href="/hopphan/view">Quay lại danh sách Hợp phần</a>
+
+<div class="image-gallery">
+    {{#each images}}
+        <div class="image-item">
+            <img src="{{this.path}}" width="150" alt="Hình ảnh sự kiện">
+        </div>
+    {{else}}
+        <p>Không có ảnh nào.</p>
+    {{/each}}
+</div>
+
+<style>
+    .image-gallery {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .image-item {
+        border: 1px solid #ddd;
+        padding: 5px;
+        background: #f9f9f9;
+    }
+</style>

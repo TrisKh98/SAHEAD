@@ -1,0 +1,31 @@
+<div class='mt-4'>
+  <h3>Danh sách</h3>
+  <a href='/events/type/trash'>Xem Thùng Rác</a>
+  <a href='/events/type/create'>Thêm</a>
+  <table class='table mt-3'>
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col" >Tên</th>
+        <th>Hành Động</th>
+        
+      </tr>
+    </thead>
+    <tbody>
+      {{#each Type}}
+        <tr>
+          <td>{{sum @index 1}}</td>
+          <td class="name">
+            {{ this.name }}
+          </td>
+          <td>
+            <a href="/events/type/{{this._id}}/edit" class="btn btn-info btn-sm">Sửa</a>
+            <form method="POST" action="/events/type/{{this._id}}/delete?_method=DELETE" style="display:inline;">
+              <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+            </form>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,30 @@
+<div class='mt-4'>
+  <a href='/statis/view'>Xem</a>
+  <h3>Sửa</h3>
+  <form method='POST' action='/statis/{{Statis._id}}?_method=PUT'>
+    
+    <table class="table table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th></th>
+          <th>Năm</th>
+          <th>Hoạt động</th>
+          <th>Số liệu</th>
+          <th>Giá trị</th>
+          <th>Đơn vị</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tr>
+        <td></td>
+        <td><input type="text" class="form-control" name="nam" value="{{ Statis.nam }}"></td>
+        <td><input type="text" class="form-control" name="hoat_dong" value="{{ Statis.hoat_dong }}"></td>
+        <td><input type="text" class="form-control" name="chi_so" value="{{ Statis.chiso }}"></td>
+        <td><input type="number" class="form-control" name="gia_tri" value="{{ Statis.gia_tri }}"></td>
+        <td><input type="text" class="form-control" name="don_vi" value="{{ Statis.don_vi }}"></td>
+        <td><button type="submit" class="btn btn-primary">Sửa</button></td>
+      </tr>
+    </table>
+
+  </form>
+</div>

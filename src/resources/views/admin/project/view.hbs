@@ -1,62 +1,104 @@
 <form name="container-form" method="POST" class="mt-4">
-    <h3>my khoa</h3>
-    
-    <a href="/project/create">Tạo [{{ deletedCount }}]</a>
-  
-    <table class="table">
+    <h3>Danh Sách Dự Án</h3>
+
+    <!-- Nút chuyển đổi ngôn ngữ -->
+
+    <table class="table table-striped mt-3">
         <thead>
             <tr>
-                <th scope="col">#</th>
-                <th scope="col">Ten</th>
-                <th scope="col">Mota</th>
-                <th></th>
+                <th>#</th>
+                <th id="image">Hình Ảnh</th>
+                <th id="titleColumn">Tên Dự Án</th>
+                <th id="overviewColumn">Mô tả</th>
+                <th id="generalColumn">Mục tiêu tổng quát</th>
+                <th id="specificColumn">Mục tiêu cụ thể</th>
+                <th id="timelineColumn">Mốc Thời Gian</th>
+                <th id="Action">Hành Động</th>
             </tr>
         </thead>
         <tbody>
             {{#each project}}
             <tr>
-              
                 <th scope="row">{{sum @index 1}}</th>
                 <td>
-                    <a href="/{{ slug }}/project">{{this.name}}</a>
+                    {{#if this.image}}
+                        <img src="{{this.image}}" alt="Hình dự án" width="50">
+                    {{else}}
+                        <span>Không có ảnh</span>
+                    {{/if}}
                 </td>
-                <td>{{{this.overview}}}</td>
-                
+                <td class="project-title">    
+                    <a href="/project/{{ this.slug_vi }}" class="vi">{{ this.vi_en.vi.name }}</a>
+                    <a href="/project/{{ this.slug_en }}" class="en" style="display: none;">{{ this.vi_en.en.name }}</a>
+                </td>
+                <td class="project-overview">
+                    <span class="vi">{{{this.vi_en.vi.overview}}}</span>
+                    <span class="en" style="display: none;">{{{this.vi_en.en.overview}}}</span>
+                </td>
+                <td class="project-goal">
+                    <span class="vi">{{{this.vi_en.vi.general_goal}}}</span>
+                    <span class="en" style="display: none;">{{{this.vi_en.en.general_goal}}}</span>
+                </td>
+                <td class="project-specific-goal">
+                    <span class="vi">{{{this.vi_en.vi.specific_goal}}}</span>
+                    <span class="en" style="display: none;">{{{this.vi_en.en.specific_goal}}}</span>
+                </td>
                 <td>
-                    <a href="/project/{{ this._id }}/edit" class="btn btn-info">Sửa</a>
-                    <a href="" class="btn btn-danger" data-bs-toggle="modal" data-id="{{ this._id }}" data-bs-target="#delete-khoa-modal">Xóa</a>
+                    {{#if this.timeline.startDate}}
+                        {{formatDate this.timeline.startDate 'DD/MM/YYYY'}}-{{formatDate this.timeline.endDate 'DD/MM/YYYY'}}
+                    {{else}}
+                        Không có
+                    {{/if}}
+                </td>
+                <td>
+                    <a href="/project/{{this._id}}/edit" class="btn btn-warning">✏️ Sửa</a>
                 </td>
             </tr>
-            {{ else }}
+            {{else}}
             <tr>
-              <td colspan="5" class="text-center">
-                Bạn chưa đăng khoa nào.
-                <a href="/khoa/create">Đăng khoa</a>
-              </td>
+                <td colspan="8" class="text-center">
+                    Không có dự án nào.
+                    <a href="/project/create" class="btn btn-primary">Thêm Dự Án</a>
+                </td>
             </tr>
-            {{/each}} 
-           
-            </tr>
+            {{/each}}
         </tbody>
     </table>
 </form>
-{{!-- Confirm deleta Khoa --}}
-<div id="delete-khoa-modal" class="modal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Xóa Khoa?</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p>Sure???.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-        <button id="btn-delete-khoa" type="button" class="btn btn-danger">Xóa bỏ</button>
-      </div>
-    </div>
-  </div>
-</div>
+{{!-- <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const btnVi = document.getElementById("switchToVi");
+    const btnEn = document.getElementById("switchToEn");
+    const titleColumn = document.getElementById("titleColumn");
+    const viTitles = document.querySelectorAll(".vi");
+    const enTitles = document.querySelectorAll(".en");
 
+    btnVi.addEventListener("click", function(event) {
+        event.preventDefault(); // Ngăn chặn reload trang
+        localStorage.setItem("selectedLanguage", "vi"); // Lưu trạng thái
+        updateLanguage("vi");
+    });
+
+    btnEn.addEventListener("click", function(event) {
+        event.preventDefault(); // Ngăn chặn reload trang
+        localStorage.setItem("selectedLanguage", "en"); // Lưu trạng thái
+        updateLanguage("en");
+    });
+
+    function updateLanguage(lang) {
+        if (lang === "vi") {
+            titleColumn.innerText = "Tên Dự Án";
+            viTitles.forEach(el => el.style.display = "inline");
+            enTitles.forEach(el => el.style.display = "none");
+        } else {
+            titleColumn.innerText = "Project Name";
+            viTitles.forEach(el => el.style.display = "none");
+            enTitles.forEach(el => el.style.display = "inline");
+        }
+    }
+     // Kiểm tra ngôn ngữ đã lưu trước đó khi tải lại trang
+    const savedLanguage = localStorage.getItem("selectedLanguage") || "vi";
+    updateLanguage(savedLanguage);
+});
+</script> --}}
 

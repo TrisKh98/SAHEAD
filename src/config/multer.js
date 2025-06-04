@@ -20,15 +20,19 @@ const storage = multer.diskStorage({
     }
   },
   filename: function (req, file, cb) {
-    // Đặt tên tệp là timestamp + phần mở rộng (tránh lỗi trùng lặp)
-    const uniqueSuffix = Date.now() + path.extname(file.originalname);
-    cb(null, uniqueSuffix);
+    const safeFilename = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    cb(null, safeFilename);
   },
 });
 
 // Bộ lọc loại file
 const upload = multer({
   storage: storage,
+  limits: { // 🚀 Tăng giới hạn file
+    fileSize: 100 * 1024 * 1024, // 100MB
+    fieldSize: 100 * 1024 * 1024, // 100MB (cho dữ liệu văn bản)
+    files: 10 // Cho phép tối đa 10 file
+  },
   fileFilter: (req, file, cb) => {
     const allowedTypes = [
       'image/jpeg', 'image/png', 'image/jpg',

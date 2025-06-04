@@ -5,18 +5,27 @@
   <table class='table mt-3'>
     <thead>
       <tr>
-        <th>#</th>
-        <th>Tên Tag</th>
-        <th>Slug</th>
+        <th scope="col">#</th>
+        <th scope="col" >Tên Sự Kiện</th>
+        <th scope="col" >Mô tả</th>
+        <th>Event</th>
         <th>Hành Động</th>
+        
       </tr>
     </thead>
     <tbody>
       {{#each tags}}
         <tr>
           <td>{{@index}}</td>
-          <td>{{this.name}}</td>
-          <td>{{this.slug}}</td>
+          <td class="event-name">
+            <a  class="vi">{{ this.vi_en.vi.name }}</a>
+            <a  class="en" style="display: none;">{{ this.vi_en.en.name }}</a>
+          </td>
+          <td class="event-overview">
+            <span class="vi">{{{this.vi_en.vi.overview}}}</span>
+            <span class="en" style="display: none;">{{{this.vi_en.en.overview}}}</span>
+          </td>
+          <td><a href="/events/tag/{{ this._id }}">Xem</a></td>
           <td>
             <a href="/tags/{{this._id}}/edit" class="btn btn-info btn-sm">Sửa</a>
             <form method="POST" action="/tags/{{this._id}}?_method=DELETE" style="display:inline;">

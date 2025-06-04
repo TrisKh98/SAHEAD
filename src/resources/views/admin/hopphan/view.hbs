@@ -6,19 +6,29 @@
     <thead>
       <tr>
         <th>#</th>
-        <th>Tên Tag</th>
-        <th>Slug</th>
+        <th>Tên Hợp phần</th>
         <th>Nội dung</th>
+        <th>Events</th>
+        <th>Pic</th>
+        <th>Doc</th>
         <th>Hành Động</th>
       </tr>
     </thead>
     <tbody>
       {{#each hp}}
         <tr>
-          <td>{{@index}}</td>
-          <td>{{this.name}}</td>
-          <td>{{this.slug}}</td>
-          <td>{{{ this.content }}}</td>
+          <td>{{sum @index 1}}<td>
+          <td class="hophan-name">
+            <a href="/hopphan/{{ this.slug_vi }}/detail" class="vi">{{ this.vi_en.vi.name }}</a>
+            <a href="/hopphan/{{ this.slug_en }}/detail" class="en" style="display: none;">{{ this.vi_en.en.name }}</a>
+          </td>
+          <td class="hopphan-overview">
+            <span class="vi">{{{this.vi_en.vi.content}}}</span>
+            <span class="en" style="display: none;">{{{this.vi_en.en.content}}}</span>
+          </td>
+          <td><a href="/events/hopphan/{{ this._id }}">Xem</a></td>
+          <td><a href="/hopphan/{{ this._id }}/images">Xem</a></td>
+          <td><a href="/hopphan/{{ this._id }}/documents">Xem</a></td>
           <td>
             <a href="/hopphan/{{this._id}}/edit" class="btn btn-info btn-sm">Sửa</a>
             <form method="POST" action="/hopphan/{{this._id}}?_method=DELETE" style="display:inline;">

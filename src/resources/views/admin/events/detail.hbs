@@ -1,17 +1,30 @@
-<div class='mt-4'>
+<button id="download-pdf">Tải về PDF</button>
+
+<div class='mt-4' id="pdf-content">
   <p>Ngày đăng: {{formatDate event.dateup}}</p>
+   <div class="mb-3">
+        <label class="form-label fw-bold" id="timelineColumn">Mốc thời gian:</label>
+        <p>{{ formatDate event.timeline.startDate }} - {{ formatDate event.timeline.endDate }}</p>
+    </div>
 
   <h3>{{event.name}}</h3>
-  <p><strong>Mô tả:</strong> {{{event.overview}}}</p>
-  <p><strong>Mục tiêu:</strong> {{{event.aim}}}</p>
-  <p><strong>Hoạt động:</strong> {{{event.activities}}}</p>
-  <p><strong>Kết quả:</strong> {{{event.outcomes}}}</p>
+  <h3>
+    <span class="vi">{{event.vi_en.vi.name}}</span>
+    <span class="en" style="display: none;">{{event.vi_en.en.name}}</span>
+  </h3>
+
+  <div class="mb-3">
+        <label class="form-label fw-bold" id="overviewColumn">Tổng quan:</label>
+        <span class="vi">{{{event.vi_en.vi.overview}}}</span>
+        <span class="en" style="display: none;">{{{event.vi_en.en.overview}}}</span>
+  </div>
 
   <div class="mb-3">
     <label class="form-label fw-bold">Tags:</label>
     <ul>
       {{#each event.tags}}
-        <li>{{this.name}}</li>
+        <span class="vi">{{this.vi_en.vi.name}}</span>
+        <span class="en" style="display: none;">{{this.vi_en.en.name}}</span>
       {{/each}}
     </ul>
   </div>
@@ -20,7 +33,10 @@
     <label class="form-label fw-bold">Hợp phần:</label>
     <ul>
       {{#each event.hopphan}}
-        <li>{{this.name}}</li>
+        <li>
+            <span class="vi">{{this.vi_en.vi.name}}</span>
+            <span class="en" style="display: none;">{{this.vi_en.en.name}}</span>
+        </li>
       {{/each}}
     </ul>
   </div>
@@ -40,17 +56,43 @@
     {{#if event.documents.length}}
       {{#each event.documents}}
         <li>
-          <a href="{{this.path}}" target="_blank">{{getFileName this.path}}</a>
-          <a href="/events/{{../event._id}}/documents/{{getFileName this.path}}/view" 
-             class="btn btn-primary btn-sm" target="_blank">
-            Xem
-          </a>
-        </li>
+          <a href="{{this.path}}" target="_blank">Xem  {{getFileName this.path}}</a> 
+          <a href="/events/documents/{{getFileName this.path}}/download" class="btn btn-primary">Tải xuống</a>
+        </li>   
       {{/each}}
     {{else}}
       <li>Không có tài liệu nào được duyệt.</li>
     {{/if}}
   </ul>
 
+ 
   <a href='/events/view' class='btn btn-secondary'>Quay lại</a>
 </div>
+
+<script>
+  document.getElementById("download-pdf").addEventListener("click", function () {
+    const element = document.getElementById("pdf-content");
+
+    const isVietnamese = document.querySelector(".vi").style.display !== "none";
+
+    const nameVi = document.querySelector(".vi").textContent.trim();
+    const nameEn = document.querySelector(".en").textContent.trim();
+
+    const rawName = isVietnamese ? nameVi : nameEn;
+
+    // Làm sạch tên: loại bỏ các ký tự đặc biệt không hợp lệ cho tên file
+    const safeFileName = rawName
+      .replace(/[\/\\?%*:|"<>]/g, '') // loại bỏ ký tự đặc biệt không được phép trong tên file
+      .trim() + '.pdf';
+
+    const opt = {
+      margin: 0.5,
+      filename: safeFileName || 'trang-chi-tiet.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save();
+  });
+</script>

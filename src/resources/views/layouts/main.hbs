@@ -5,6 +5,7 @@
     <title>SAHED</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/open-iconic-master/font/css/open-iconic-bootstrap.css">
 </head>
 <body>
     <div class="app">
@@ -20,12 +21,93 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="/ckeditor/ckeditor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 </body>
 </html>
 
 <script>
-    CKEDITOR.replace('overview')
-    CKEDITOR.replace('aim')
-    CKEDITOR.replace('activities')
-    CKEDITOR.replace('outcomes')
+    CKEDITOR.replace('content')
+    CKEDITOR.replace('vi_overview')
+    CKEDITOR.replace('en_overview')
+     CKEDITOR.replace('vi_content')
+    CKEDITOR.replace('en_content')
+    CKEDITOR.replace('vi_general_goal')
+    CKEDITOR.replace('en_general_goal')
+    CKEDITOR.replace('vi_specific_goal')
+    CKEDITOR.replace('en_specific_goal')
+    CKEDITOR.replace('vi_outcomes')
+    CKEDITOR.replace('en_outcomes')
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const btnVi = document.getElementById("switchToVi");
+    const btnEn = document.getElementById("switchToEn");
+    
+    // Các phần tử trong form nhập dự án
+    const formVi = document.getElementById("formVi");
+    const formEn = document.getElementById("formEn");
+
+    // Các cột trong bảng danh sách dự án
+    const titleColumn = document.getElementById("titleColumn");
+    const eventNameColumn = document.getElementById("eventNameColumn");
+
+    const overviewColumn = document.getElementById("overviewColumn");
+    const generalColumn = document.getElementById("generalColumn");
+    const specificColumn = document.getElementById("specificColumn");
+    const timelineColumn = document.getElementById("timelineColumn");
+    const actionColumn = document.getElementById("Action");
+    const image = document.getElementById("image");
+    const currentImage = document.getElementById("currentImage");
+    const newImage = document.getElementById("newImage");
+    const saveDATA = document.getElementById("save");
+    const updateDATA = document.getElementById("update");
+
+    const viElements = document.querySelectorAll(".vi");
+    const enElements = document.querySelectorAll(".en");
+
+    function updateLanguage(lang) {
+        localStorage.setItem("selectedLanguage", lang); // Lưu trạng thái ngôn ngữ
+
+        // Cập nhật form nhập dự án
+        if (formVi && formEn) {
+            formVi.style.display = lang === "vi" ? "block" : "none";
+            formEn.style.display = lang === "en" ? "block" : "none";
+        }
+
+        // Cập nhật tiêu đề cột của bảng danh sách dự án
+        if (titleColumn) titleColumn.innerText = lang === "vi" ? "Tên Dự Án" : "Project Name";
+        if (eventNameColumn) eventNameColumn.innerText = lang === "vi" ? "Tên Sự Kiện" : "Event Name";
+
+        if (overviewColumn) overviewColumn.innerText = lang === "vi" ? "Mô tả" : "Overview";
+        if (generalColumn) generalColumn.innerText = lang === "vi" ? "Mục tiêu tổng quát" : "General Goal";
+        if (specificColumn) specificColumn.innerText = lang === "vi" ? "Mục tiêu cụ thể" : "Specific Goal";
+        if (timelineColumn) timelineColumn.innerText = lang === "vi" ? "Mốc Thời Gian" : "Timeline";
+        if (actionColumn) actionColumn.innerText = lang === "vi" ? "Hành Động" : "Actions";
+        if (image) image.innerText = lang === "vi" ? "Ảnh" : "Image";
+        if (currentImage) currentImage.innerText = lang === "vi" ? "Ảnh hiện tại" : "Current Image";
+        if (newImage) newImage.innerText = lang === "vi" ? "Hình ảnh" : "New Image";
+        if (saveDATA) save.innerText = lang === "vi" ? "Lưu" : "Save";
+        if (updateDATA) actionColumn.innerText = lang === "vi" ? "Cập Nhật" : "Update";
+
+        // Cập nhật nội dung bảng
+        viElements.forEach(el => el.style.display = lang === "vi" ? "inline" : "none");
+        enElements.forEach(el => el.style.display = lang === "en" ? "inline" : "none");
+    }
+
+    btnVi?.addEventListener("click", function(event) {
+        event.preventDefault();
+        updateLanguage("vi");
+    });
+
+    btnEn?.addEventListener("click", function(event) {
+        event.preventDefault();
+        updateLanguage("en");
+    });
+
+    // Lấy ngôn ngữ đã lưu từ localStorage
+    const savedLanguage = localStorage.getItem("selectedLanguage") || "vi";
+    updateLanguage(savedLanguage);
+});
 </script>

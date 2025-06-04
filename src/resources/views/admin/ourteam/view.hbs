@@ -1,3 +1,19 @@
+<form action="/ourteam/search" method="GET">
+      <input type="text" name="keyword" placeholder="Nhập tên cần tìm..." value="{{keyword}}">
+      <button type="submit">Tìm kiếm</button>
+    </form>
+
+    {{#if our}}
+      <ul>
+        {{#each our}}
+          <li>{{this.vi_en.vi.name}} / {{this.vi_en.en.name}}</li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p>Không tìm thấy kết quả</p>
+    {{/if}}
+
+
 <form name="container-form" method="POST" class="mt-4">
     <h3>my khoa</h3>
     
@@ -7,22 +23,63 @@
         <thead>
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">Ten</th>
-                <th scope="col">logo</th>
+                <th scope="col">Ảnh</th>
+                <th scope="col">Tên</th>
+                <th>Mô tả</th>
+                <th scope="col">Chức vụ</th>
+                <th scope="col">Vai trò</th>
+                <th scope="col">Ban</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            {{#each ourteam}}
+            {{#each our}}
             <tr>
               
                 <th scope="row">{{sum @index 1}}</th>
                 <td>
-                    <a href="/{{ slug }}/event">{{this.name}}</a>
-                </td>
-                <td>
                     <img src="{{this.picture}}" alt="{{this.name}}" width="300">
                 </td>
+                <td class="event-name">
+                    <a  class="vi">{{ this.vi_en.vi.name }}</a>
+                    <a  class="en" style="display: none;">{{ this.vi_en.en.name }}</a>
+                </td>
+                <td><div class="mb-3">
+                    <label for="content" class="form-label">Tổng quan</label>
+                    <textarea id="content" name="content" class="form-control">{{ this.content }}</textarea>
+                </div> </td>
+                <td>
+                    {{#each this.position}}
+                        <li>
+                            <span class="vi">{{this.vi_en.vi.name}}</span>
+                            <span class="en" style="display: none;">{{this.vi_en.en.name}}</span>
+                        </li>
+                    {{else}}
+                        <span>Không có dữ liệu</span>
+                    {{/each}}
+                </td>
+                <td>
+                    {{#each this.roles}}
+                        <li>
+                            <span class="vi">{{this.vi_en.vi.name}}</span>
+                            <span class="en" style="display: none;">{{this.vi_en.en.name}}</span>
+                        </li>
+                    {{else}}
+                        <span>Không có dữ liệu</span>
+                    {{/each}}
+                </td>
+                <td>
+                    {{#each this.sub}}
+                        <li>
+                            <span class="vi">{{this.vi_en.vi.name}}</span>
+                            <span class="en" style="display: none;">{{this.vi_en.en.name}}</span>
+                        </li>
+                    {{else}}
+                        <span>Không có dữ liệu</span>
+                    {{/each}}
+                </td>
+
+                
                 <td>
                     <a href="/ourteam/{{ this._id }}/edit" class="btn btn-info">Sửa</a>
                     <a href="" class="btn btn-danger" data-bs-toggle="modal" data-id="{{ this._id }}" data-bs-target="#delete-khoa-modal">Xóa</a>

@@ -1,12 +1,51 @@
 <div class='mt-4'>
   <h3>Thêm Tag</h3>
   <a href='/tags/view'>Xem</a>
-  <form method='POST' action='/tags/store'>
-    <div class='mb-3'>
-      <label for='name' class='form-label'>Tag Name</label>
-      <input type='text' class='form-control' id='name' name='name' required />
+  <form  id="tagForm" method='POST' action='/tags/store'>
+    <div id="formVi">
+        <h3>🇻🇳 Thông tin tiếng Việt</h3>
+        <div class="mb-3">
+            <label for="vi_name" class="form-label">Tên nhãn</label>
+            <input type="text" id="vi_name" name="vi_name" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="vi_overview" class="form-label">Giới thiệu</label>
+            <textarea id="vi_overview" name="vi_overview" class="form-control"></textarea>
+        </div>
     </div>
 
+    <!-- Form Tiếng Anh -->
+    <div id="formEn" style="display: none;">
+        <h3>🇬🇧 English Information</h3>
+        <div class="mb-3">
+            <label for="en_name" class="form-label">Tag Name</label>
+            <input type="text" name="en_name" id="en_name" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="en_overview" class="form-label">Overview</label>
+            <textarea id="en_overview" name="en_overview" class="form-control"></textarea>
+        </div>
+    </div>
+
+    <input type="hidden" id="vi_en_json" name="vi_en_json">
     <button type='submit' class='btn btn-primary'>Thêm</button>
   </form>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    document.getElementById("tagForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const viName = document.getElementById("vi_name").value.trim();
+        const enName = document.getElementById("en_name").value.trim();
+        const viOverview = CKEDITOR.instances.vi_overview.getData().trim();
+        const enOverview = CKEDITOR.instances.en_overview.getData().trim();
+        const data = { 
+          vi: { name: viName, overview: viOverview }, 
+          en: { name: enName, overview: enOverview } 
+          };
+        document.getElementById("vi_en_json").value = JSON.stringify(data);
+        this.submit();
+    });
+});
+</script>

@@ -7,10 +7,13 @@ const cors = require('cors');
 const upload = require('./config/multer');
 const { engine } = require('express-handlebars');
 const moment = require('moment-timezone');
+const session = require('express-session');
 const app = express();
 
 const { env } = require('./config/environment');
 const { corsOptions } = require('./config/cors');
+
+const SortMiddleware = require('./middlewares/sort');
 
 const route = require('./routes');
 const db = require('./config/db');
@@ -23,13 +26,22 @@ app.use('/img', express.static(path.join(__dirname, 'public/img')));
 app.use('/docs', express.static(path.join(__dirname, 'public/docs')));
 
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ limit: '100mb', extended: true }));
 
-app.use(express.json());
+app.use(express.json({ limit: '100mb' }));
 
 app.use(methodOverride('_method'));
 
 app.use(morgan('combined'));
+
+app.use(SortMiddleware)
+
+app.use(session({
+  secret: 'your_secret_key', // Thay bằng chuỗi bí mật bất kỳ
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Để `true` nếu chạy HTTPS
+}));
 
 //Xử lý Cors
 app.use(cors());
@@ -39,22 +51,7 @@ app.engine(
   'hbs',
   engine({
     extname: '.hbs',
-    helpers: {
-      sum: (a, b) => a + b,
-      eq: (a, b) => a === b,
-      getFileName: (path) => {
-        return path ? path.split('/').pop() : '';
-      },
-      includes: (array, value) => {
-        if (!Array.isArray(array) || !value) return false;
-        return array.some(item => item?.toString() === value.toString());
-      },
-      formatDate: (date) => {
-        return date ? moment(date).tz('Asia/Ho_Chi_Minh').format('DD/MM/YYYY') : '';
-      },
-      
-      
-    },
+    helpers: require('./helpers/handlebars'),
   }),
 );
 app.set('view engine', 'hbs');

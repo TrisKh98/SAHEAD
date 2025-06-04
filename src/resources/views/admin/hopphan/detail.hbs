@@ -1,0 +1,32 @@
+<div class="container mt-5">
+
+    <h2 class="text-center text-primary">
+        <span class="vi">{{ hp.vi_en.vi.name }}</span>
+        <span class="en" style="display: none;">{{ hp.vi_en.en.name }}</span>
+    </h2>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold" id="overviewColumn">Nội dung:</label>
+        <span class="vi">{{{hp.vi_en.vi.content}}}</span>
+        <span class="en" style="display: none;">{{{hp.vi_en.en.content}}}</span>
+    </div>
+
+    <h3>Sự kiện liên quan</h3>
+    {{#if events.length}}
+        <ul>
+            {{#each events}}
+                <li>
+                    <a href="/events/{{this._id}}/detail">{{this.vi_en.vi.name}}</a> 
+                </li>
+            {{/each}}
+        </ul>
+    {{else}}
+        <p>Không có sự kiện nào thuộc hợp phần này.</p>
+    {{/if}}
+    <div class="mb-3">
+        <label class="form-label fw-bold" id="timelineColumn">Mốc thời gian:</label>
+        <p>{{ formatDate hp.timeline.startDate }} - {{ formatDate hp.timeline.endDate }}</p>
+    </div>
+
+    <a href='/hopphan/view' class='btn btn-secondary'>Quay lại</a>
+</div>

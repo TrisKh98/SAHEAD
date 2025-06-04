@@ -27,7 +27,7 @@
               data-bs-toggle='dropdown'
               aria-expanded='false'
             >
-              Dropdown
+              Dropdown1
             </a>
             <ul class='dropdown-menu'>
               <li><a class='dropdown-item' href='/khoa/create'>Thêm</a></li>
@@ -47,10 +47,10 @@
               data-bs-toggle='dropdown'
               aria-expanded='false'
             >
-              Dropdown
+              Dropdown2
             </a>
             <ul class='dropdown-menu'>
-              <li><a class='dropdown-item' href='/project/view'>Dự án</a></li>
+              <li><a class='dropdown-item' href='/project/create'>Dự án</a></li>
               <li><a
                   class='dropdown-item'
                   href='/partner/view'
@@ -60,14 +60,43 @@
                   href='/ourteam/view'
                 >Ourteam</a></li>
               <li><a class='dropdown-item' href='/events/view'>Events</a></li>
+              <li><a class='dropdown-item' href='/events/type/view'>Type</a></li>
+              <li><a class='dropdown-item' href='/statis'>Statis</a></li>
+              <li><a class='dropdown-item' href='/sub/create'>Sub</a></li>
+              <li><a class='dropdown-item' href='/position/create'>Position</a></li>
+              <li><a class='dropdown-item' href='/roles/create'>Roles</a></li>
               <li><a class='dropdown-item' href='/tags/view'>Tags</a></li>
               <li><a class='dropdown-item' href='/hopphan/view'>Hợp phần</a></li>
               <li><hr class='dropdown-divider' /></li>
               <li><a class='dropdown-item' href='#'>Đăng xuất</a></li>
             </ul>
           </li>
+        <li class='nav-item dropdown'>
+            {{#if user}}
+                <a class='nav-link dropdown-toggle' href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false'>
+                    👤 {{user.name}} ({{#if (eq user.role 1)}}Admin{{else}}User{{/if}})
+                </a>
+                <ul class='dropdown-menu'>
+                    {{#if (eq user.role 1)}}
+                        <li><a class='dropdown-item' href='/auth/dashboard'>Quản lý</a></li>
+                        <li><a class='dropdown-item' href='/auth/signup'>Thêm tài khoản</a></li>
+                    {{/if}}
+                    <li><a class='dropdown-item' href='/auth/logout'>Đăng xuất</a></li>
+                </ul>
+            {{else}}
+                <a class='btn btn-success' href='/auth/signin'>Đăng nhập</a>
+            {{/if}}
+        </li>
+
+
+
+
 
         </ul>
+        <li class='nav-item'>
+            <button id="switchToVi" class="btn btn-primary">🇻🇳 Tiếng Việt</button>
+            <button id="switchToEn" class="btn btn-secondary">🇬🇧 Tiếng Anh</button>
+        </li>
         {{! <form class="d-flex" role="search">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>

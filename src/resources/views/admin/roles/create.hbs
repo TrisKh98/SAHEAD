@@ -1,0 +1,41 @@
+<div class='mt-4'>
+  <h3>Thêm roles</h3>
+  <a href='/roles/view'>Xem</a>
+  <form  id="rolesForm" method='POST' action='/roles/store'>
+    <div id="formVi">
+        <h3>🇻🇳 Thông tin tiếng Việt</h3>
+        <div class="mb-3">
+            <label for="vi_name" class="form-label">Tên</label>
+            <input type="text" id="vi_name" name="vi_name" class="form-control">
+        </div>
+    </div>
+
+    <!-- Form Tiếng Anh -->
+    <div id="formEn" style="display: none;">
+        <h3>🇬🇧 English Information</h3>
+        <div class="mb-3">
+            <label for="en_name" class="form-label">Name</label>
+            <input type="text" name="en_name" id="en_name" class="form-control">
+        </div>
+    </div>
+
+    <input type="hidden" id="vi_en_json" name="vi_en_json">
+    <button type='submit' class='btn btn-primary'>Thêm</button>
+  </form>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    document.getElementById("rolesForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const viName = document.getElementById("vi_name").value.trim();
+        const enName = document.getElementById("en_name").value.trim();
+        const data = { 
+          vi: { name: viName }, 
+          en: { name: enName } 
+          };
+        document.getElementById("vi_en_json").value = JSON.stringify(data);
+        this.submit();
+    });
+});
+</script>

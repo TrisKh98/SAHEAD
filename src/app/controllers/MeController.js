@@ -5,9 +5,16 @@ class MeMeController {
   // [GET] /me/store/khoa
   storeKhoa(req, res, next) {
     // res.json(req.body)
+    let courseQuery = Khoa.find({});
+    if(req.query.hasOwnProperty('_sort')){
+      const isValidtype = ['asc', 'desc'].includes(req.query.type);
+      courseQuery = courseQuery.sort({
+        [req.query.column]: isValidtype ? req.query.type: 'desc',
+      });
+    }
 
     Promise.all([
-      Khoa.find({}),
+      courseQuery,
       Khoa.countDocumentsWithDeleted({ deleted: true }),
     ])
       .then(([khoa, deletedCount]) =>

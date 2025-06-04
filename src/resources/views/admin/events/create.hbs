@@ -1,6 +1,8 @@
 <div class='container mt-5'>
-  <a href='/events/view'>Xem</a>
+  <!-- Nút chuyển đổi giữa form tiếng Việt & tiếng Anh -->
+  <a href='/events/view' class="btn btn-success">Xem</a>
   <form
+  id="eventForm"
     method='POST'
     action='/events/store'
     enctype='multipart/form-data'
@@ -8,20 +10,80 @@
   >
     <h2 class='text-center text-primary'>Thêm Sự Kiện</h2>
 
-    <div class='mb-3'>
-      <label class='form-label fw-bold'>Tên Sự Kiện:</label>
-      <input type='text' class='form-control' name='name' required />
+    <div id="formVi">
+        <h3>🇻🇳 Thông tin tiếng Việt</h3>
+        <div class="mb-3">
+            <label for="vi_name" class="form-label">Tên sự kiện</label>
+            <input type="text" id="vi_name" name="vi_name" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="vi_overview" class="form-label">Tổng quan</label>
+            <textarea id="vi_overview" name="vi_overview" class="form-control"></textarea>
+        </div>
     </div>
 
-    <div class='mb-3'>
-      <label class='form-label fw-bold'>Tổng quan:</label>
-      <textarea class='form-control' name='overview'></textarea>
+    <!-- Form Tiếng Anh -->
+    <div id="formEn" style="display: none;">
+        <h3>🇬🇧 English Information</h3>
+        <div class="mb-3">
+            <label for="en_name" class="form-label">Event Name</label>
+            <input type="text" name="en_name" id="en_name" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="en_overview" class="form-label">Overview</label>
+            <textarea id="en_overview" name="en_overview" class="form-control"></textarea>
+        </div>
     </div>
 
     {{!-- <div class='mb-3'>
       <label class='form-label fw-bold'>Ngày đăng:</label>
       <input type='text' class='form-control' name='dateup' />
     </div> --}}
+    <div class="mb-3">
+      <label for="url" class="form-label">URL</label>
+      <input type="text" id="url" name="url" class="form-control">
+    </div>
+
+    {{!-- <div class="mb-3">
+      <label class="form-label fw-bold" for="news_event">Loại sự kiện:</label>
+      <select class="form-control" name="news_event" id="news_event">
+        <option value="0" selected>Không chọn</option>
+        <option value="1">News</option>
+        <option value="2">Events</option>
+      </select>
+    </div> --}}
+
+     <div class="mb-3">
+      <label class="form-label fw-bold" for="type">type:</label>
+      <select name="type">
+        {{#each type}}
+          <option value="{{this._id}}">{{this.name}}</option>
+        {{/each}}
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-bold" for="news_event">status:</label>
+      <select name="status">
+        <option value="Đã xuất bản">Đã xuất bản</option>
+        <option value="Đang thực hiện">Đang thực hiện</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-bold" for="news_event">eventType:</label>
+      <select name="eventType">
+        <option value="Trong nước">Trong nước</option>
+        <option value="Ngoài nước">Ngoài nước</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-bold" for="news_event">Ngôn ngữ:</label>
+      <select name="courseLanguage">
+        <option value="Anh">Anh</option>
+        <option value="Hàn Quốc">Hàn Quốc</option>
+      </select>
+    </div>
+
+
     <div class='mb-3'>
       <label class='form-label fw-bold'>Ngày đăng:</label>
       <input
@@ -31,8 +93,11 @@
         value='{{formatDate defaultDate}}'
       />
     </div>
-
-
+    <div class='mb-3'>
+        <label class='form-label fw-bold' id="timelineColumn">Thời gian:</label>
+        <input type='date' class='form-control' name='startDate' />
+        <input type='date' class='form-control mt-2' name='endDate' />
+    </div>
 
     {{!-- <div class="mb-3">
       <label class="form-label fw-bold">Chọn Tag:</label>
@@ -51,14 +116,12 @@
           {{#each tags}}
             <div class="form-check">
               <input 
-                class="form-check-input" 
-                type="checkbox" 
-                name="tags" 
-                value="{{this._id}}" 
+                class="form-check-input" type="checkbox" name="tags" value="{{this._id}}" 
                 id="tag-{{this._id}}" 
                 {{#if (includes ../event.tags this._id)}}checked{{/if}}>
               <label class="form-check-label" for="tag-{{this._id}}">
-                {{this.name}}
+                <span class="vi">{{this.vi_en.vi.name}}</span>
+                <span class="en" style="display: none;">{{this.vi_en.en.name}}</span>
               </label>
             </div>
           {{/each}}
@@ -69,14 +132,43 @@
       <label class="form-label fw-bold">Chọn Hợp Phần:</label>
       {{#each hopphan}}
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" 
-                name="hopphan" 
-                value="{{this._id}}" 
-                {{#if (includes ../event.hopphan this._id)}}checked{{/if}}>
-          <label class="form-check-label">{{this.name}}</label>
+          <input class="form-check-input" type="checkbox" name="hopphan" value="{{this._id}}">
+          <label class="form-check-label">
+            <span class="vi">{{this.vi_en.vi.name}}</span>
+            <span class="en" style="display: none;">{{this.vi_en.en.name}}</span>
+          </label>
         </div>
       {{/each}}
     </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-bold">Chọn Ứng Viên:</label>
+      <input type="text" id="searchOurteam" class="form-control mb-2" placeholder="Tìm kiếm ứng viên...">
+       <div id="ourteamList">
+        {{#each ourteam}}
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="ourteam" value="{{this._id}}">
+          <label class="form-check-label">
+            <span class="vi">{{this.vi_en.vi.name}}</span>
+            <span class="en" style="display: none;">{{this.vi_en.en.name}}</span>
+          </label>
+        </div>
+        {{/each}}
+       </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-bold">Chọn Cộng Tác:</label>
+      {{#each partner}}
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="partner" value="{{this._id}}">
+          <label class="form-check-label">
+            <span class="vi">{{this.name}}</span>
+            
+          </label>
+        </div>
+      {{/each}}
+    </div>
+
 
     <div class='mb-3'>
       <label class='form-label fw-bold'>Ảnh chính:</label>
@@ -105,9 +197,42 @@
         multiple
       />
     </div>
+    <input type="hidden" id="vi_en_json" name="vi_en_json">
 
-
-
-    <button type='submit' class='btn btn-primary w-100 mt-3'>Lưu</button>
+    <button type="submit" class="btn btn-success" id="save">Lưu</button>
   </form>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    document.getElementById("eventForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const viName = document.getElementById("vi_name").value.trim();
+        const enName = document.getElementById("en_name").value.trim();
+        const viOverview = CKEDITOR.instances.vi_overview.getData().trim();
+        const enOverview = CKEDITOR.instances.en_overview.getData().trim();
+        const data = { 
+          vi: { name: viName, overview: viOverview }, 
+          en: { name: enName, overview: enOverview } 
+          };
+        document.getElementById("vi_en_json").value = JSON.stringify(data);
+        this.submit();
+    });
+    document.getElementById("searchOurteam").addEventListener("input", function() {
+      let filter = this.value.toLowerCase();
+      let checkboxes = document.querySelectorAll("#ourteamList .form-check");
+
+      checkboxes.forEach(function(item) {
+        let nameVi = item.querySelector(".vi").textContent.toLowerCase();
+        let nameEn = item.querySelector(".en").textContent.toLowerCase();
+        
+        if (nameVi.includes(filter) || nameEn.includes(filter)) {
+          item.style.display = "";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    });
+});
+</script>

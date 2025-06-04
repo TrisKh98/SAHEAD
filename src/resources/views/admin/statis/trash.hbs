@@ -1,0 +1,96 @@
+<form name="container-form" method="POST" action="/statis/handle-form-actions">
+<div class='mt-4'>
+  <h3>Thùng Rác Tags</h3>
+   <a href='/statis'>Xem</a>
+   <div class="mt-4 d-flex align-items-center">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="check-all">
+        <label class="form-check-label" for="check-all">
+          Chọn tất cả
+        </label>
+      </div>
+      <select class="form-select form-cotrol-sm checkbox-select-all-options" aria-label="Default select example" name="action" required>
+        <option value="" >Open this select menu</option>
+        <option value="force">Xóa vĩnh viễn</option>
+        <option value="restore">Khôi phục</option>
+        
+      </select>
+      <button id="btn-form-actions" class="btn btn-primary btn-sm btn-havecheck disabled">Áp dụng</button>
+    </div>
+  <table class='table mt-3'>
+    <thead>
+      <tr>
+        <th></th>
+        <th>#</th>
+        <th>Tên </th>
+        <th>Hành Động</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each Statis}}
+      {{#if deleted}}
+        <tr>
+          <td>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="Ids[]" value="{{ this._id }}" id="">
+            </div>
+          </td>
+          <td>{{@index}}</td>
+          <td>{{this.name}}</td>
+          
+          <td>
+            <form method="POST" action="/statis/{{this._id}}/restore?_method=PATCH" style="display:inline;">
+              <button type="submit" class="btn btn-success btn-sm">Khôi phục</button>
+            </form>
+            <form method="POST" action="/statis/{{this._id}}/force?_method=DELETE" style="display:inline;">
+              <button type="submit" class="btn btn-danger btn-sm">Xóa Vĩnh Viễn</button>
+            </form>
+          </td>
+        </tr>
+        {{/if}}
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        var statisId = null;
+        var checkAll = $('#check-all');
+        var itemsCheck = $('input[name="Ids[]"]');
+        var haveCheck = $('.btn-havecheck')
+        //check all
+
+        checkAll.change(function(){
+          var isCheck = $(this).prop('checked');
+          itemsCheck.prop('checked', isCheck);
+          renderCheckAllSubmitBtn();
+          
+        });
+        //items check
+        itemsCheck.change(function(){
+          var isCheck = itemsCheck.length === $('input[name="Ids[]"]:checked').length;
+          checkAll.prop('checked', isCheck);
+          renderCheckAllSubmitBtn();
+        });
+        haveCheck.on('submit',function (e) {
+          var isSubmit = !$(this).hasClass('disabled');
+          if(!isSubmit){
+            e.preventDefault();
+          }
+        })
+
+        function renderCheckAllSubmitBtn(){
+            var checkOut = $('input[name="Ids[]"]:checked').length;
+            if(checkOut > 0){
+              haveCheck.removeClass('disabled');
+            }else{
+              haveCheck.addClass('disabled');
+            }
+        }
+        console.log(containerForm)
+    });
+
+</script>
+

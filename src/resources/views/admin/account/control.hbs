@@ -1,0 +1,38 @@
+<h1>Admin Dashboard</h1>
+<p>Chào mừng, {{user.name}}!</p>
+<p class="mt-3"><a href="/auth/signup">Thêm</a></p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Tên</th>
+            <th>Quyền</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each accounts}}
+        <tr>
+            <td>{{sum @index 1}}</td>
+            <td>{{this.name}}</td>
+            <td>
+                <form action="/auth/update-role" method="POST">
+                    <input type="hidden" name="id" value="{{this._id}}">
+                    <select name="role" class="form-select" onchange="this.form.submit()">
+                        <option value="1" {{#if (eq this.role 1)}}selected{{/if}}>Admin</option>
+                        <option value="2" {{#if (eq this.role 2)}}selected{{/if}}>User</option>
+                        <option value="3" {{#if (eq this.role 3)}}selected{{/if}}>Ban</option>
+                    </select>
+                </form>
+            </td>
+            <td>
+                <form action="/auth/delete/{{this._id}}" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa?')">
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+<a href="/">Quay lại Trang chủ</a>

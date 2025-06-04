@@ -1,0 +1,17 @@
+<h2>Danh sách toàn bộ ảnh phụ</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Ảnh</th>
+            <th>Tên sự kiện</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each images}}
+        <tr>
+            <td><img src="{{this.path}}" width="200"></td>
+            <td>{{this.eventName}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>

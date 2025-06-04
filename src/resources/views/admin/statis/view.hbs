@@ -1,0 +1,207 @@
+<div class="container mt-4">
+  <h3>Thống Kê</h3>
+  <a href='/statis/trash'>Thùng rác</a>
+  <a href='/statis/auto'>Auto</a>
+  
+<form id="subForm" name="container-form" method="POST" action="/statis/store">
+<table class="table table-bordered">
+  <thead class="table-dark">
+    <tr>
+      <th></th>
+      <th>Năm</th>
+      <th>Hoạt động</th>
+      <th>Số liệu</th>
+      <th>Giá trị</th>
+      <th>Đơn vị</th>
+      <th id="Action">Hành động</th>
+    </tr>
+  </thead>
+  <tr>
+    <td></td>
+    
+    <td><input type="text" class="form-control" name="nam"></td>
+    <td><input type="text" class="form-control" name="hoat_dong"></td>
+    {{!-- <td><input type="text" class="form-control" name="chi_so"></td> --}}
+    <td>
+      <div id="formVi">
+        <div class="mb-3">
+            <input type="text" id="vi_chi_so" name="vi_chi_so" class="form-control">
+        </div>
+      </div>
+
+      <!-- Form Tiếng Anh -->
+      <div id="formEn" style="display: none;">
+          <div class="mb-3">
+              <input type="text" name="en_chi_so" id="en_chi_so" class="form-control">
+          </div>
+      </div>
+    </td>
+    <td><input type="number" class="form-control" name="gia_tri"></td>
+    {{!-- <td><input type="text" class="form-control" name="don_vi"></td> --}}
+    <td>
+      <div id="formVi">
+        <div class="mb-3">
+            <input type="text" id="vi_don_vi" name="vi_don_vi" class="form-control">
+        </div>
+      </div>
+
+      <!-- Form Tiếng Anh -->
+      <div id="formEn" style="display: none;">
+          <div class="mb-3">
+              <input type="text" name="en_don_vi" id="en_don_vi" class="form-control">
+          </div>
+      </div>
+    </td>
+
+    <input type="hidden" id="vi_en_json" name="vi_en_json">
+    <td><button type="submit" class="btn btn-primary">Thêm</button></td>
+  </tr>
+</table>
+  
+</form>
+  <form name="container-form" method="POST" action="/statis/handle-form-actions">
+  <div class="mt-4 d-flex align-items-center">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="check-all">
+        <label class="form-check-label" for="check-all">
+          Chọn tất cả
+        </label>
+      </div>
+      <select class="form-select form-cotrol-sm checkbox-select-all-options" aria-label="Default select example" name="action" required>
+        <option value="" >Open this select menu</option>
+        <option value="delete">Xóa</option>
+        
+      </select>
+      <button id="btn-form-actions" class="btn btn-primary btn-sm btn-havecheck disabled">Áp dụng</button>
+    </div>
+    <table class="table table-bordered">
+      
+      <tbody>
+        <!-- Danh sách dữ liệu đã nhập -->
+        {{#each Statis}}
+        <tr>
+          <td>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="Ids[]" value="{{ this._id }}" id="">
+            </div>
+          </td>
+          <td>{{this.nam}}</td>
+          <td>{{this.hoat_dong}}</td>
+          <td>
+            <a  class="vi">{{ this.vi_en.vi.chi_so }}</a>
+            <a  class="en" style="display: none;">{{ this.vi_en.en.chi_so }}</a>
+          </td>
+          <td>{{this.gia_tri}}</td>
+          <td>
+            <a  class="vi">{{ this.vi_en.vi.don_vi }}</a>
+            <a  class="en" style="display: none;">{{ this.vi_en.en.don_vi }}</a>
+          </td>
+          <td>
+            <a href="/statis/{{this._id}}/edit" class="btn btn-warning btn-sm">Sửa</a>
+            <a href="" class="btn btn-danger" data-bs-toggle="modal" data-id="{{ this._id }}" data-bs-target="#delete-modal">Xóa</a>
+          </td>
+        </tr>
+        {{else}}
+        <tr>
+          <td colspan="6" class="text-center">Chưa có dữ liệu thống kê.</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </form>
+</div>
+
+<div id="delete-modal" class="modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xóa?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Chắc chứ??.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button id="btn-delete" type="button" class="btn btn-danger">Xóa bỏ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form name="delete-form" method="POST" ></form>
+
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function(){
+        var statisId = null;
+        var deleteForm = document.forms['delete-form'];
+        var containerForm =document.forms['container-form'];
+        var btnDelete = document.getElementById('btn-delete');
+
+        var checkAll = $('#check-all');
+        var itemsCheck = $('input[name="Ids[]"]');
+        var haveCheck = $('.btn-havecheck')
+
+        $('#delete-modal').on('show.bs.modal', function (event){
+            var button = $(event.relatedTarget);
+            statisId = button.data('id');
+            
+        });
+        
+        btnDelete.onclick=(function(){    
+            deleteForm.action='/statis/' + statisId + '/delete?_method=DELETE';
+            deleteForm.submit();
+        });
+
+        //check all
+
+        checkAll.change(function(){
+          var isCheck = $(this).prop('checked');
+          itemsCheck.prop('checked', isCheck);
+          renderCheckAllSubmitBtn();
+          
+        });
+        //items check
+        itemsCheck.change(function(){
+          var isCheck = itemsCheck.length === $('input[name="Ids[]"]:checked').length;
+          checkAll.prop('checked', isCheck);
+          renderCheckAllSubmitBtn();
+        });
+        haveCheck.on('submit',function (e) {
+          var isSubmit = !$(this).hasClass('disabled');
+          if(!isSubmit){
+            e.preventDefault();
+          }
+        })
+
+        function renderCheckAllSubmitBtn(){
+            var checkOut = $('input[name="Ids[]"]:checked').length;
+            if(checkOut > 0){
+              haveCheck.removeClass('disabled');
+            }else{
+              haveCheck.addClass('disabled');
+            }
+        }
+        console.log(containerForm)
+
+         document.getElementById("subForm").addEventListener("submit", function(event) {
+          event.preventDefault();
+          const viCH = document.getElementById("vi_chi_so").value.trim();
+          const enCH = document.getElementById("en_chi_so").value.trim();
+          const viDV = document.getElementById("vi_don_vi").value.trim();
+          const enDV = document.getElementById("en_don_vi").value.trim();
+          const data = { 
+            vi: { chi_so: viCH, don_vi:viDV }, 
+            en: { chi_so: enCH, don_vi:enDV } 
+            };
+          document.getElementById("vi_en_json").value = JSON.stringify(data);
+          this.submit();
+      });
+    });
+
+</script>
+
+
+

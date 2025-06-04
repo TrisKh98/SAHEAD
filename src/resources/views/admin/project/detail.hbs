@@ -1,18 +1,69 @@
-<div class='mt-4'>
-  <h3>{{project.name}}</h3>
-  <p><strong>Mô tả:</strong> {{{project.overview}}}</p>
-  <p><strong>Mục tiêu:</strong> {{project.aim}}</p>
-  <p><strong>Hoạt động:</strong> {{project.activities}}</p>
-  <p><strong>Kết quả:</strong> {{project.outcomes}}</p>
+<div class="container mt-5">
+    <!-- Nút chuyển đổi ngôn ngữ -->
+    <button id="switchToVi" class="btn btn-primary">🇻🇳 Tiếng Việt</button>
+    <button id="switchToEn" class="btn btn-secondary">🇬🇧 Tiếng Anh</button>
 
-  {{#if project.image}}
-    <img src='{{project.image}}' alt='{{project.name}}' width='300' />
-  {{/if}}
+    <h2 class="text-center text-primary">
+        <span class="vi">{{ project.vi_en.vi.name }}</span>
+        <span class="en" style="display: none;">{{ project.vi_en.en.name }}</span>
+    </h2>
 
-  <p><strong>Thời gian:</strong>
-    {{formatDate project.timeline.startDate}}
-    -
-    {{formatDate project.timeline.endDate}}</p>
+    <div class="mb-3">
+        <label class="form-label fw-bold" id="overviewColumn">Tổng quan:</label>
+        <span class="vi">{{{project.vi_en.vi.overview}}}</span>
+        <span class="en" style="display: none;">{{{project.vi_en.en.overview}}}</span>
+    </div>
 
-  <a href='/project/view' class='btn btn-secondary'>Quay lại</a>
+    <div class="mb-3">
+        <label class="form-label fw-bold">Danh sách Hợp phần:</label>
+        <ul>
+            {{#each hopphans}}
+                <li>
+                    <span class="vi">{{this.vi_en.vi.name}}</span>
+                    <span class="en" style="display: none;">{{this.vi_en.en.name}}</span>
+                </li>
+            {{/each}}
+        </ul>
+    </div>
+
+
+    <div class="mb-3">
+        <label class="form-label fw-bold" id="generalColumn">Mục tiêu chung:</label>
+        <span class="vi">{{{ project.vi_en.vi.general_goal }}}</span>
+        <span class="en" style="display: none;">{{{ project.vi_en.en.general_goal }}}</span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold" id="specificColumn">Mục tiêu cụ thể:</label>
+        <span class="vi">{{{ project.vi_en.vi.specific_goal }}}</span>
+        <span class="en" style="display: none;">{{{ project.vi_en.en.specific_goal }}}</span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Kết quả đạt được:</label>
+        <span class="vi">{{{ project.vi_en.vi.outcomes }}}</span>
+        <span class="en" style="display: none;">{{{ project.vi_en.en.outcomes }}}</span>
+    </div>
+
+    <!-- Hiển thị ảnh -->
+    {{#if project.image}}
+    <div class="mb-3">
+        <label class="form-label fw-bold" id="image">Hình ảnh:</label>
+        <img src="{{ project.image }}" alt="Hình ảnh dự án" class="img-thumbnail" width="300">
+    </div>
+    {{/if}}
+    <h4>Ảnh phụ:</h4>
+    <div class='d-flex flex-wrap'>
+        {{#each project.images}}
+        <img src='{{this.path}}' class='img-thumbnail m-2' width='150' />
+        {{/each}}
+    </div>
+
+    <!-- Hiển thị mốc thời gian -->
+    <div class="mb-3">
+        <label class="form-label fw-bold" id="timelineColumn">Mốc thời gian:</label>
+        <p>{{ formatDate project.timeline.startDate }} - {{ formatDate project.timeline.endDate }}</p>
+    </div>
+
+    <a href='/project/view' class='btn btn-secondary'>Quay lại</a>
 </div>

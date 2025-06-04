@@ -1,27 +1,27 @@
 <div class='mt-4'>
-  <h3>Thùng Rác Tags</h3>
-   <a href='/tags/view'>Xem</a>
+  <h3>Thùng Rác</h3>
+   <a href='/sub/view'>Xem</a>
   <table class='table mt-3'>
     <thead>
       <tr>
         <th>#</th>
-        <th>Tên Tag</th>
-        <th>Slug</th>
+        <th>Tên</th>
+        
         <th>Hành Động</th>
       </tr>
     </thead>
     <tbody>
-      {{#each tags}}
+      {{#each sub}}
       {{#if deleted}}
         <tr>
           <td>{{@index}}</td>
           <td>{{this.name}}</td>
-          <td>{{this.slug}}</td>
+          
           <td>
-            <form method="POST" action="/tags/{{this._id}}/restore?_method=PATCH" style="display:inline;">
+            <form method="POST" action="/sub/{{this._id}}/restore?_method=PATCH" style="display:inline;">
               <button type="submit" class="btn btn-success btn-sm">Khôi phục</button>
             </form>
-            <form method="POST" action="/tags/{{this._id}}/force?_method=DELETE" style="display:inline;">
+            <form method="POST" action="/sub/{{this._id}}/force?_method=DELETE" style="display:inline;">
               <button type="submit" class="btn btn-danger btn-sm">Xóa Vĩnh Viễn</button>
             </form>
           </td>

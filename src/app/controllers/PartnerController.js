@@ -1,60 +1,56 @@
 const Partner = require('../models/Partner');
 const Project = require('../models/Project');
 const { mutipleMongooseToObject } = require('../../util/mongoose');
+const fs = require('fs');
+const path = require('path');
 
 class PartnerController {
-  async create(req, res, next) {
-    try {
-      const projects = await Project.find({}).lean();
-      res.render('admin/partner/create', { projects });
-    } catch (error) {
-      next(error);
-    }
+  create(req, res, next) {    
+    res.render('admin/partner/create');
   }
 
-  async store(req, res, next) {
+  store(req, res, next) {
     try {
-      const { name, link, projectId } = req.body;
-      const logoPath = req.file ? `/img/${req.file.filename}` : ''; // Nếu có ảnh, lưu đường dẫn
-
-      if (!name) {
-        return res
-          .status(400)
-          .json({ message: 'Tên đối tác không được để trống' });
-      }
-
-      const project = await Project.findById(projectId);
-      if (!project) {
-        return res.status(400).json({ message: 'Project không tồn tại!' });
-      }
-
+      // Kiểm tra và lấy dữ liệu JSON từ request body
+      const { name, link, type} = req.body;
+  
+      // Kiểm tra và xử lý dữ liệu image
+      const logoPath = req.file ? `/img/${req.file.filename}` : '';
+  
+      // Chuẩn bị dữ liệu để lưu vào database
       // Thêm đối tác
       const partner = new Partner({
         name,
         logo: logoPath,
         link,
-        project: projectId,
+        type: type || 'Edu',
       });
-      await partner.save();
-
-      // Thêm vào danh sách đối tác của project
-      project.partners.push(partner._id);
-      await project.save();
-
-      res.redirect('back');
+  
+      // Lưu vào database
+      partner
+        .save()
+        .then(() => res.redirect('/partner/view'))
+        .catch((error) => {
+          console.error('Lỗi khi lưu:', error);
+          res.status(500).json({ message: 'Lỗi khi lưu', error });
+        });
     } catch (error) {
-      console.error('Lỗi khi thêm đối tác:', error);
       next(error);
     }
   }
 
-  async index(req, res, next) {
-    try {
-      const partners = await Partner.find({}).populate('project').lean();
-      res.render('admin/partner/view', { partners });
-    } catch (error) {
-      next(error);
-    }
+
+  index(req, res, next) {
+
+    Partner.find({})
+          .then((partners) => {
+            // res.json(partners)
+            res.render('admin/partner/view', {
+              partners: mutipleMongooseToObject(partners),
+            });
+          })
+    
+          .catch(next);
   }
   edit(req, res, next) {
     Partner.findById(req.params.id)
@@ -63,26 +59,40 @@ class PartnerController {
       .catch(next);
   }
   update(req, res, next) {
-    try {
-      const updateData = {
-        name: req.body.name,
-        link: req.body.link,
-      };
+    Partner.findById(req.params.id)
+    .then((partner)=> {
+        if (!partner) {
+          return res.status(404).json({ message: '❌ Không tồn tại!' });
+        }
+        const updateData = {
+          name: req.body.name,
+          link: req.body.link,
+          type: req.body.type || partner.type,
+        };
 
-      // Nếu có ảnh mới, cập nhật ảnh, nếu không giữ nguyên ảnh cũ
-      if (req.file) {
-        updateData.logo = `/img/${req.file.filename}`;
-      }
-
-      Partner.updateOne({ _id: req.params.id }, updateData)
-        .then(() => res.redirect('/partner/view'))
-        .catch((error) => {
-          console.error('Lỗi khi cập nhật:', error);
-          res.status(500).json({ message: 'Lỗi khi cập nhật', error });
-        });
-    } catch (error) {
-      next(error);
-    }
+        // Nếu có ảnh mới, xóa ảnh cũ trước khi cập nhật
+        if (req.file) {
+          if (partner.logo) {
+            const oldImagePath = path.join(__dirname, '../../public', partner.logo);
+            fs.unlink(oldImagePath, (err) => {
+              if (err && err.code !== 'ENOENT') {
+                console.error('❌ Lỗi khi xóa ảnh cũ:', err);
+              }
+            });
+          }
+          // Gán đường dẫn ảnh mới
+          updateData.logo = `/img/${req.file.filename}`;
+        }
+        return Partner.updateOne({ _id: req.params.id }, updateData)
+    })
+    .then(() => {
+      res.redirect('/partner/view');
+    })
+    .catch((error) => {
+      console.error('Lỗi khi cập nhật:', error);
+      res.status(500).json({ message: 'Lỗi khi cập nhật', error });
+    });
+   
   }
 
   destroy(req, res, next) {
